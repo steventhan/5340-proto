@@ -35,19 +35,23 @@ const styles = {
 };
 
 const titles = {
-  "/": "Dashboard",
+  "/": "Login",
+  "/dashboard": "Dashboard",
   "/reserve": "Reserve",
   "/my-reservations": "My reservations",
   "/settings" : "Settings",
   "/membership" : "Membership",
+  //"/login": "Login",
+
 }
 
 const links = [
-  {path: "/", name: "Dashboard", icon: <Dashboard />},
+  {path: "/dashboard", name: "Dashboard", icon: <Dashboard />},
   {path: "/reserve", name: "Reserve", icon: <img alt="ss" src={treadmill} />},
   {path: "/my-reservations", name: "My reservations", icon: <Assignment />},
   {path: "/settings", name: "Settings", icon: <Settings />},
   {path: "/membership", name: "Membership", icon: <Person />},
+  {path: "/", name: "Logout", icon: <Person />}
 ]
 
 
