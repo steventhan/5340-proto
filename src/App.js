@@ -45,7 +45,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoggedIn: false,
+      isLoggedIn: true,
       snackbarOpen : false,
       snackbarMsg : "",
       snackbarAction : {label: "", link: ""},

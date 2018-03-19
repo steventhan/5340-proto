@@ -2,11 +2,16 @@ import React, { Component } from "react";
 import { AppBar, Card, CardContent, Typography,
    Grid, List, Tabs, Tab, Button, MenuItem, Select } from "material-ui";
 import { withStyles } from "material-ui/styles";
+import { KeyboardArrowUp, KeyboardArrowDown } from "material-ui-icons";
+
 import MachineSelectDialog from "./MachineSelectDialog";
+import { StatusChip } from "./UtilComponents";
 import { machines, machineTypes, evalStatus } from "../fakeData";
 import floorMap from "../floor.png"
 
-const styles = {};
+const styles = {
+  levelButtons: {minWidth: 45, margin: 2}
+};
 
 class Reserve extends Component {
   constructor(props) {
@@ -39,6 +44,7 @@ class Reserve extends Component {
   }
 
   render() {
+    const classes = this.props.classes
     return (
       <div>
         <AppBar style={{marginTop: 55}} position="fixed" color="default">
@@ -54,8 +60,20 @@ class Reserve extends Component {
             <Tab label="Floor View" />
           </Tabs>
         </AppBar>
-        <Grid container style={{marginTop: 110}} spacing={0} justify="flex-end">
-          <Grid item style={{paddingRight: 5}}>
+        <Grid container style={{marginTop: 110}} spacing={0} justify="space-between">
+          <Grid item style={{paddingLeft: 10}}>
+            {this.state.currentTab === 1 &&
+              <div>
+                <span style={{marginRight: 10}}>Level 1</span>
+                <Button color="primary" variant="raised" size="small" className={classes.levelButtons}>
+                  <KeyboardArrowUp />
+                </Button>
+                <Button color="primary" variant="raised" size="small" className={classes.levelButtons}>
+                  <KeyboardArrowDown />
+                </Button>
+              </div>}
+          </Grid>
+          <Grid item style={{paddingRight: 10}}>
             <Select
               value="All"
               displayEmpty
@@ -68,11 +86,14 @@ class Reserve extends Component {
               })}
             </Select>
           </Grid>
+        </Grid>
+        <Grid container spacing={0} justify="flex-end">
           <Grid xs={12} item>
             {this.state.currentTab === 0 &&
               <List>
                 {machines.filter(m => {
-                  return !JSON.parse(localStorage.getItem("reservations")).reduce((prev, cur) => {
+                  return ["Available", "Busy"].includes(evalStatus(m))
+                      && !JSON.parse(localStorage.getItem("reservations")).reduce((prev, cur) => {
                     return prev || cur.id === m.id;
                   }, false);
                 }).map(m => {
@@ -89,16 +110,16 @@ class Reserve extends Component {
                             </Grid>
                             <Grid item xs={8}>
                               <Typography component="p">
-                                <strong>ID: </strong>{`${m.id}`}
+                                <strong>ID: </strong>{m.id}
                               </Typography>
                               <Typography component="p">
-                                <strong>Type: </strong>{`${m.type}`}
+                                <strong>Type: </strong>{m.type}
                               </Typography>
-                              <Typography component="p">
-                                <strong>Status: </strong>{`${evalStatus(m)}`}
-                              </Typography>
-                              <Typography component="p">
-                                <strong>Description: </strong>{`${m.description}`}
+                              <div>
+                                <strong>Status: </strong><StatusChip status={evalStatus(m)} />
+                              </div>
+                              <Typography>
+                                <strong>Description: </strong>{m.description}
                               </Typography>
                             </Grid>
                           </Grid>
