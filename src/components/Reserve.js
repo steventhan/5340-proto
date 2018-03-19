@@ -1,12 +1,15 @@
 import React, { Component } from "react";
-import { AppBar, Card, CardContent, Typography,
+import { AppBar, Card, CardContent, Typography, IconButton,
    Grid, List, Tabs, Tab, Button, MenuItem, Select } from "material-ui";
 import { withStyles } from "material-ui/styles";
 import MachineSelectDialog from "./MachineSelectDialog";
 import { machines, machineTypes, evalStatus } from "../fakeData";
 import floorMap from "../floor.png"
+import { KeyboardArrowUp, KeyboardArrowDown } from "material-ui-icons";
 
-const styles = {};
+const styles = {
+  levelButtons: {minWidth: 50, margin: 2}
+};
 
 class Reserve extends Component {
   constructor(props) {
@@ -39,6 +42,7 @@ class Reserve extends Component {
   }
 
   render() {
+    const classes = this.props.classes
     return (
       <div>
         <AppBar style={{marginTop: 55}} position="fixed" color="default">
@@ -54,8 +58,20 @@ class Reserve extends Component {
             <Tab label="Floor View" />
           </Tabs>
         </AppBar>
-        <Grid container style={{marginTop: 110}} spacing={0} justify="flex-end">
-          <Grid item style={{paddingRight: 5}}>
+        <Grid container style={{marginTop: 110}} spacing={0} justify="space-between">
+          <Grid item style={{paddingLeft: 10}}>
+            {this.state.currentTab === 1 &&
+              <div>
+                <span style={{marginRight: 10}}>Level 1</span>
+                <Button color="primary" variant="raised" size="small" className={classes.levelButtons}>
+                  <KeyboardArrowUp />
+                </Button>
+                <Button color="primary" variant="raised" size="small" className={classes.levelButtons}>
+                  <KeyboardArrowDown />
+                </Button>
+              </div>}
+          </Grid>
+          <Grid item style={{paddingRight: 10}}>
             <Select
               value="All"
               displayEmpty
@@ -68,6 +84,8 @@ class Reserve extends Component {
               })}
             </Select>
           </Grid>
+        </Grid>
+        <Grid container spacing={0} justify="flex-end">
           <Grid xs={12} item>
             {this.state.currentTab === 0 &&
               <List>
