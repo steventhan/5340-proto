@@ -8,7 +8,9 @@ import { withStyles } from "material-ui/styles";
 import MenuIcon from 'material-ui-icons/Menu';
 import { Dashboard, Assignment, Settings, Person, Notifications, ExitToApp, Calendar } from 'material-ui-icons';
 
-import treadmill from "../../treadmill.svg";
+import HelpPopover from "../HelpPopover";
+
+import treadmill from "../../treadmill.png";
 import heisenberg from "../../heisenberg.jpg";
 import qrcode from "../../qrcode.png";
 import logo from "../../husky-logo.png";
@@ -75,19 +77,43 @@ class UserProfile extends Component {
 class QRCode extends Component {
   render = () => {
     return (
-      <Grid
-        container
-        direction="column"
-        justify="center"
-        spacing={0}
-        alignItems="center">
-        <Grid item style={{paddingTop: "15%", paddingBottom: "10%"}}>
-          <img alt="qr" style={{width: 100, height: 100}} src={qrcode} />
-          <Typography style={{paddingLeft: 5}} variant="body1">Please scan your QR </Typography>
-          <Typography style={{paddingLeft: 5}} variant="body1">code using the reserved machine</Typography>
-
+      <div style={{paddingTop: "15%", paddingBottom: "10%"}}>
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          spacing={0}
+          alignItems="center">
+          <Grid xs={12} item>
+            <img alt="qr" style={{width: 100, height: 100}} src={qrcode} />
+            <div style={{maxWidth: 100}}>
+              <Typography style={{width: "100%"}} align="center" variant="body1">Your QR code</Typography>
+            </div>
+          </Grid>
         </Grid>
-      </Grid>
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          spacing={0}
+          alignItems="center">
+          <Grid xs={12} item>
+            <HelpPopover
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+              }}>
+              <Typography style={{padding: 10}} variant="body1">
+                Scan your QR code at the reserved machine to start your workout session
+              </Typography>
+            </HelpPopover>
+          </Grid>
+        </Grid>
+      </div>
     );
   }
 
