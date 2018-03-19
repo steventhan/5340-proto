@@ -62,7 +62,7 @@ class Settings extends Component {
          </Grid>
 
          <Grid item xs={12} sm={6}>
-           <Paper style={{height: 40}} className={paper}>Allow the app to track workout
+           <Paper style={{height: 40}} className={paper}>Allow the app to collect data
              <Select style={{position: 'absolute', right: 0}}
                 value={this.state.answer3}
                 onChange={this.handleChange}
@@ -79,7 +79,7 @@ class Settings extends Component {
            </Paper>
          </Grid>
          <Grid item xs={12} sm={6}>
-           <Paper style={{height: 40}} className={paper}>Share location Information
+           <Paper style={{height: 40}} className={paper}>Share GPS location information
              <Select style={{position: 'absolute', right: 0}}
                 value={this.state.answer4}
                 onChange={this.handleChange}
