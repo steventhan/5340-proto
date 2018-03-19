@@ -8,7 +8,7 @@ import { HelpOutline } from "material-ui-icons";
 const statusDesc = [
   {name: "Available", desc: "Machine available", color: "#1ab394"},
   {name: "Busy", desc: "Less than 5 people in queue", color: "#f8ac59"},
-  {name: "Full", desc: "At least 5 people in queue", color: "#ed5565"},
+  {name: "Full", desc: "Queue is full", color: "#ed5565"},
   {name: "Unavailable", desc: "Machine unavailable", color: "#3f3f3f"},
 ]
 
