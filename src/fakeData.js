@@ -46,13 +46,13 @@ const machines = [
 
 let evalStatus = m => {
   if (m.queueSize >= 1 && m.queueSize < 10) {
-    return "busy";
+    return "Busy";
   } else if (m.queueSize >= 10) {
-    return "full";
+    return "Full";
   } else if (m.queueSize < 0) {
-    return "inactive";
+    return "Inactive";
   } else {
-    return "available";
+    return "Available";
   }
 }
 
