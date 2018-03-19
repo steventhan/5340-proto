@@ -8,6 +8,7 @@ import Dialog, {
   withMobileDialog,
 } from 'material-ui/Dialog';
 
+import StatusPopover from "./StatusPopover";
 import { Up, StatusChip } from "./UtilComponents";
 import { machineTypes, evalStatus } from "../fakeData"
 
@@ -38,10 +39,10 @@ class MachineSelectDialog extends Component {
         </DialogTitle>
         <DialogContent>
           <Grid container justify="center">
-            <Grid item xs={4}>
+            <Grid item xs={5}>
               <img alt="ss" src={machineTypes[this.props.machine.type]} style={{width: "100%"}}/>
             </Grid>
-            <Grid item xs={8} style={{fontSize: "0.875rem", lineHeight: "140%"}}>
+            <Grid item xs={7} style={{fontSize: "0.875rem", lineHeight: "1.4em"}}>
               <div>
                 <strong>ID: </strong>{this.props.machine.id}
               </div>
@@ -50,6 +51,7 @@ class MachineSelectDialog extends Component {
               </div>
               <div>
                 <strong>Status: </strong> {<StatusChip status={evalStatus(this.props.machine)} />}
+                <StatusPopover />
               </div>
               <div>
                 <strong>Queue size: </strong>{this.props.machine.queueSize}
@@ -61,7 +63,7 @@ class MachineSelectDialog extends Component {
                 <Typography variant="subheading"><strong>Description</strong></Typography>
                 <Divider/>
                 <Typography style={{paddingTop: 10, paddingBottom: 10}} component="p">
-                  {`${this.props.machine.description}`}
+                  {this.props.machine.description}
                 </Typography>
                 <Divider/>
               </Grid>

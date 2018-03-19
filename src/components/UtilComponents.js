@@ -8,7 +8,7 @@ const statusColor = {
   Available: "#1ab394",
   Busy: "#f8ac59",
   Full: "#ed5565",
-  Unavailable: "#dcdcdc",
+  Unavailable: "#3f3f3f",
 }
 
 const StatusChip = (props) => {
@@ -18,7 +18,7 @@ const StatusChip = (props) => {
       style={{
         backgroundColor: statusColor[props.status],
         color: "#fff",
-        height: "100%",
+        height: 20,
         padding: "1px 1px",
       }} />
   );

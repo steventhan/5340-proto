@@ -5,6 +5,7 @@ import { withStyles } from "material-ui/styles";
 import { KeyboardArrowUp, KeyboardArrowDown } from "material-ui-icons";
 
 import MachineSelectDialog from "./MachineSelectDialog";
+import StatusPopover from "./StatusPopover";
 import { StatusChip } from "./UtilComponents";
 import { machines, machineTypes, evalStatus } from "../fakeData";
 import floorMap from "../floor.png"
@@ -115,7 +116,7 @@ class Reserve extends Component {
                                 <strong>Type: </strong>{m.type}
                               </Typography>
                               <div>
-                                <strong>Status: </strong><StatusChip status={evalStatus(m)} />
+                                <strong>Status: </strong><StatusChip status={evalStatus(m)} /> 
                               </div>
                               <Typography>
                                 <strong>Description: </strong>{m.description}
