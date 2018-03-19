@@ -1,10 +1,8 @@
 import React, { Component } from "react";
 import { findDOMNode } from "react-dom";
 import { Avatar, List, ListItem, ListItemAvatar, ListItemText,
-  IconButton, Divider, Popover, Paper, Grid, Typography } from "material-ui";
+  IconButton, Popover, Paper } from "material-ui";
 import { HelpOutline } from "material-ui-icons";
-
-import { StatusChip } from "./UtilComponents";
 
 
 const statusDesc = [

@@ -5,7 +5,6 @@ import { withStyles } from "material-ui/styles";
 import { KeyboardArrowUp, KeyboardArrowDown } from "material-ui-icons";
 
 import MachineSelectDialog from "./MachineSelectDialog";
-import StatusPopover from "./StatusPopover";
 import { StatusChip } from "./UtilComponents";
 import { machines, machineTypes, evalStatus } from "../fakeData";
 import floorMap from "../floor.png"
