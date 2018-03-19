@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withStyles } from "material-ui/styles";
 import { Divider, InputAdornment, Input, InputLabel,
   Button, Typography, Grid, Radio, TextField, FormControlLabel } from 'material-ui';
 import Dialog, {
@@ -9,7 +10,7 @@ import Dialog, {
 } from 'material-ui/Dialog';
 
 import { Up } from "./UtilComponents";
-import { machineTypes, evalStatus } from "../fakeData"
+import { machineTypes } from "../fakeData"
 
 class ConfirmDialog extends Component {
   render() {
@@ -33,6 +34,15 @@ class ConfirmDialog extends Component {
     )
   }
 }
+
+
+const styles = {
+  fullWidth: {
+    width: "100%",
+    display: "block"
+  }
+}
+
 
 class ReservationModifyDialog extends Component {
   state = {
@@ -70,7 +80,7 @@ class ReservationModifyDialog extends Component {
 
 
   render() {
-    const { fullScreen } = this.props;
+    const { fullScreen, classes } = this.props;
 
     return (
       <div>
@@ -111,9 +121,6 @@ class ReservationModifyDialog extends Component {
                   <strong>Type: </strong>{`${this.props.machine.type}`}
                 </Typography>
                 <Typography component="p">
-                  <strong>Status: </strong>{`${evalStatus(this.props.machine)}`}
-                </Typography>
-                <Typography component="p">
                   <strong>Queue size: </strong>{`${this.props.machine.queueSize}`}
                 </Typography>
                 <Button onClick={this.handleCancelConfirmation} size="small" fullWidth variant="raised" color="secondary">
@@ -134,6 +141,7 @@ class ReservationModifyDialog extends Component {
 
               <Grid style={{marginTop: 12}} container justify="center">
                 <Grid item xs={10}>
+                  <InputLabel className={classes.fullWidth} htmlFor="">Choose start time:</InputLabel>
                   <FormControlLabel
                     control={
                       <Radio
@@ -158,8 +166,7 @@ class ReservationModifyDialog extends Component {
                     onClick={() => this.setState({start: "other"})}
                     disabled={this.state.start === "other" ? false : true}
                     id="time" type="time" />
-                  <InputLabel htmlFor="duration">Duration</InputLabel>
-                  <br/>
+                  <InputLabel className={classes.fullWidth} htmlFor="duration">Duration:</InputLabel>
                   <Input
                     style={{maxWidth: 80}}
                     value={20}
@@ -187,4 +194,4 @@ class ReservationModifyDialog extends Component {
   }
 }
 
-export default withMobileDialog()(ReservationModifyDialog);
+export default withStyles(styles)(withMobileDialog()(ReservationModifyDialog));
