@@ -45,14 +45,14 @@ const machines = [
 ];
 
 let evalStatus = m => {
-  if (m.queueSize >= 1 && m.queueSize < 10) {
-    return "busy";
-  } else if (m.queueSize >= 10) {
-    return "full";
+  if (m.queueSize >= 1 && m.queueSize < 5) {
+    return "Busy";
+  } else if (m.queueSize >= 5) {
+    return "Full";
   } else if (m.queueSize < 0) {
-    return "inactive";
+    return "Inactive";
   } else {
-    return "available";
+    return "Available";
   }
 }
 

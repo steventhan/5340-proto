@@ -2,13 +2,15 @@ import React, { Component } from "react";
 import { AppBar, Card, CardContent, Typography,
    Grid, List, Tabs, Tab, Button, MenuItem, Select } from "material-ui";
 import { withStyles } from "material-ui/styles";
-import MachineSelectDialog from "./MachineSelectDialog";
-import { machines, machineTypes, evalStatus } from "../fakeData";
-import floorMap from "../floor.png"
 import { KeyboardArrowUp, KeyboardArrowDown } from "material-ui-icons";
 
+import MachineSelectDialog from "./MachineSelectDialog";
+import { StatusChip } from "./UtilComponents";
+import { machines, machineTypes, evalStatus } from "../fakeData";
+import floorMap from "../floor.png"
+
 const styles = {
-  levelButtons: {minWidth: 50, margin: 2}
+  levelButtons: {minWidth: 45, margin: 2}
 };
 
 class Reserve extends Component {
@@ -90,7 +92,8 @@ class Reserve extends Component {
             {this.state.currentTab === 0 &&
               <List>
                 {machines.filter(m => {
-                  return !JSON.parse(localStorage.getItem("reservations")).reduce((prev, cur) => {
+                  return ["Available", "Busy"].includes(evalStatus(m))
+                      && !JSON.parse(localStorage.getItem("reservations")).reduce((prev, cur) => {
                     return prev || cur.id === m.id;
                   }, false);
                 }).map(m => {
@@ -107,16 +110,16 @@ class Reserve extends Component {
                             </Grid>
                             <Grid item xs={8}>
                               <Typography component="p">
-                                <strong>ID: </strong>{`${m.id}`}
+                                <strong>ID: </strong>{m.id}
                               </Typography>
                               <Typography component="p">
-                                <strong>Type: </strong>{`${m.type}`}
+                                <strong>Type: </strong>{m.type}
                               </Typography>
-                              <Typography component="p">
-                                <strong>Status: </strong>{`${evalStatus(m)}`}
-                              </Typography>
-                              <Typography component="p">
-                                <strong>Description: </strong>{`${m.description}`}
+                              <div>
+                                <strong>Status: </strong><StatusChip status={evalStatus(m)} />
+                              </div>
+                              <Typography>
+                                <strong>Description: </strong>{m.description}
                               </Typography>
                             </Grid>
                           </Grid>

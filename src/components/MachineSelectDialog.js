@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Divider, InputAdornment, Input, InputLabel,
+import { Divider, InputAdornment, Input, InputLabel, FormLabel, FormControl,
   Button, Typography, Grid, Radio, TextField, FormControlLabel } from "material-ui";
 import Dialog, {
   DialogActions,
@@ -8,8 +8,18 @@ import Dialog, {
   withMobileDialog,
 } from 'material-ui/Dialog';
 
-import { Up } from "./UtilComponents";
+import { withStyles } from "material-ui/styles";
+
+import StatusPopover from "./StatusPopover";
+import { Up, StatusChip } from "./UtilComponents";
 import { machineTypes, evalStatus } from "../fakeData"
+
+const styles = {
+  fullWidth: {
+    width: "100%",
+    display: "block"
+  }
+}
 
 class MachineSelectDialog extends Component {
   state = {
@@ -23,7 +33,7 @@ class MachineSelectDialog extends Component {
   }
 
   render() {
-    const { fullScreen } = this.props;
+    const { fullScreen, classes } = this.props;
 
     return (
       <Dialog
@@ -38,22 +48,23 @@ class MachineSelectDialog extends Component {
         </DialogTitle>
         <DialogContent>
           <Grid container justify="center">
-            <Grid item xs={4}>
+            <Grid item xs={5}>
               <img alt="ss" src={machineTypes[this.props.machine.type]} style={{width: "100%"}}/>
             </Grid>
-            <Grid item xs={8}>
-              <Typography component="p">
-                <strong>ID: </strong>{`${this.props.machine.id}`}
-              </Typography>
-              <Typography component="p">
-                <strong>Type: </strong>{`${this.props.machine.type}`}
-              </Typography>
-              <Typography component="p">
-                <strong>Status: </strong>{`${evalStatus(this.props.machine)}`}
-              </Typography>
-              <Typography component="p">
-                <strong>Queue size: </strong>{`${this.props.machine.queueSize}`}
-              </Typography>
+            <Grid item xs={7} style={{fontSize: "0.875rem", lineHeight: "1.4em"}}>
+              <div>
+                <strong>ID: </strong>{this.props.machine.id}
+              </div>
+              <div >
+                <strong>Type: </strong>{this.props.machine.type}
+              </div>
+              <div>
+                <strong>Status: </strong> {<StatusChip status={evalStatus(this.props.machine)} />}
+                <StatusPopover />
+              </div>
+              <div>
+                <strong>Queue size: </strong>{this.props.machine.queueSize}
+              </div>
             </Grid>
 
             <Grid container justify="center">
@@ -61,7 +72,7 @@ class MachineSelectDialog extends Component {
                 <Typography variant="subheading"><strong>Description</strong></Typography>
                 <Divider/>
                 <Typography style={{paddingTop: 10, paddingBottom: 10}} component="p">
-                  {`${this.props.machine.description}`}
+                  {this.props.machine.description}
                 </Typography>
                 <Divider/>
               </Grid>
@@ -69,37 +80,40 @@ class MachineSelectDialog extends Component {
 
             <Grid style={{marginTop: 12}} container justify="center">
               <Grid item xs={10}>
-                <FormControlLabel
-                  control={
-                    <Radio
-                      checked={this.state.start === "now"}
-                      onChange={this.handleStartChange}
-                      value="now"
-                    />
-                  }
-                  label="Now"
-                />
-                <FormControlLabel
-                  control={
-                    <Radio
-                      checked={this.state.start === "other"}
-                      onChange={this.handleStartChange}
-                      value="other"
-                    />
-                  }
-                  label="Later at"
-                />
-                <TextField
-                  onClick={() => this.setState({start: "other"})}
-                  disabled={this.state.start === "other" ? false : true}
-                  id="time" type="time" />
-                <InputLabel htmlFor="duration">Duration</InputLabel>
-                <br/>
-                <Input
-                  style={{maxWidth: 80}}
-                  value={20}
-                  endAdornment={<InputAdornment position="end">minutes</InputAdornment>}
-                />
+                <form>
+                  <InputLabel className={classes.fullWidth} htmlFor="">Choose start time:</InputLabel>
+                  <FormControlLabel
+                    control={
+                      <Radio
+                        checked={this.state.start === "now"}
+                        onChange={this.handleStartChange}
+                        value="now"
+                      />
+                    }
+                    label="Now"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Radio
+                        checked={this.state.start === "other"}
+                        onChange={this.handleStartChange}
+                        value="other"
+                      />
+                    }
+                    label="Later at"
+                  />
+                  <TextField
+                    onClick={() => this.setState({start: "other"})}
+                    disabled={this.state.start === "other" ? false : true}
+                    id="time" type="time" />
+                  <InputLabel className={classes.fullWidth} htmlFor="duration">Duration:</InputLabel>
+                  <Input
+                    style={{maxWidth: 80}}
+                    value={20}
+                    endAdornment={<InputAdornment position="end">minutes</InputAdornment>}
+                  />
+
+                </form>
               </Grid>
             </Grid>
           </Grid>
@@ -123,4 +137,4 @@ class MachineSelectDialog extends Component {
   }
 }
 
-export default withMobileDialog()(MachineSelectDialog);
+export default withStyles(styles)(withMobileDialog()(MachineSelectDialog));

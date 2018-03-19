@@ -18,10 +18,8 @@ class ConfirmDialog extends Component {
         <Dialog
           open={this.props.open}
           onClose={this.props.handleDiscard}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">{this.props.msg}</DialogTitle>
+          <DialogContent id="alert-dialog-title">{this.props.msg}</DialogContent>
           <DialogActions>
             <Button variant="raised" onClick={this.props.onDiscard} color="default">
               No
