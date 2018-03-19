@@ -93,7 +93,8 @@ class Reserve extends Component {
             {this.state.currentTab === 0 &&
               <List>
                 {machines.filter(m => {
-                  return !JSON.parse(localStorage.getItem("reservations")).reduce((prev, cur) => {
+                  return ["Available", "Busy"].includes(evalStatus(m))
+                      && !JSON.parse(localStorage.getItem("reservations")).reduce((prev, cur) => {
                     return prev || cur.id === m.id;
                   }, false);
                 }).map(m => {
@@ -116,7 +117,7 @@ class Reserve extends Component {
                                 <strong>Type: </strong>{m.type}
                               </Typography>
                               <div>
-                                <strong>Status: </strong><StatusChip status={evalStatus(m)} /> 
+                                <strong>Status: </strong><StatusChip status={evalStatus(m)} />
                               </div>
                               <Typography>
                                 <strong>Description: </strong>{m.description}
