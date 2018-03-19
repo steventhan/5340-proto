@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { AppBar, Card, CardContent, Typography, IconButton,
+import { AppBar, Card, CardContent, Typography,
    Grid, List, Tabs, Tab, Button, MenuItem, Select } from "material-ui";
 import { withStyles } from "material-ui/styles";
 import MachineSelectDialog from "./MachineSelectDialog";
