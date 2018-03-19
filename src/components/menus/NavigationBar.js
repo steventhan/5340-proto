@@ -6,7 +6,7 @@ import { AppBar, Avatar, Drawer, Toolbar, Grid, Typography, IconButton, Badge, D
 import {ListItem, ListItemIcon, ListItemText} from "material-ui/List";
 import { withStyles } from "material-ui/styles";
 import MenuIcon from 'material-ui-icons/Menu';
-import { Dashboard, Assignment, Settings, Person, Notifications, ExitToApp } from 'material-ui-icons';
+import { Dashboard, Assignment, Settings, Person, Notifications, ExitToApp, Calendar } from 'material-ui-icons';
 
 import treadmill from "../../treadmill.svg";
 import heisenberg from "../../heisenberg.jpg";
@@ -82,7 +82,9 @@ class QRCode extends Component {
         alignItems="center">
         <Grid item style={{paddingTop: "15%", paddingBottom: "10%"}}>
           <img alt="qr" style={{width: 100, height: 100}} src={qrcode} />
-          <Typography style={{paddingLeft: 5}} variant="body1">Your QR code</Typography>
+          <Typography style={{paddingLeft: 5}} variant="body1">Please scan your QR </Typography>
+          <Typography style={{paddingLeft: 5}} variant="body1">code using the reserved machine</Typography>
+
         </Grid>
       </Grid>
     );

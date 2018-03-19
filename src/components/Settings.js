@@ -16,6 +16,7 @@ class Settings extends Component {
   handleChange = event => {
      this.setState({ [event.target.name]: event.target.value });
    };
+  //  handleChange = (event, index, value) => this.setState({value});
 
   render() {
     const classes = this.props.classes;
@@ -27,13 +28,16 @@ class Settings extends Component {
            <Paper  style={{height: 40}} className={paper}>Notify 15 minutes before reservation
              <Select style={{position: 'absolute', right: 0}}
                 value={this.state.answer1}
+                displayEmpty
                 onChange={this.handleChange}
                 inputProps={{
                   name: 'answer1',
                   id: 'answer1-simple',
                 }}>
+                <MenuItem value="">
+                 <em>Yes</em>
+                  </MenuItem>
 
-                <MenuItem value={10}>Yes</MenuItem>
                 <MenuItem value={20}>No</MenuItem>
             </Select>
            </Paper>
@@ -44,11 +48,14 @@ class Settings extends Component {
              <Select style={{position: 'absolute', right: 0}}
                 value={this.state.answer2}
                 onChange={this.handleChange}
+                displayEmpty
                 inputProps={{
                   name: 'answer2',
                   id: 'answer2-simple',
                 }}>
-                <MenuItem value={10}>Yes</MenuItem>
+                <MenuItem value="">
+                 <em>Yes</em>
+                  </MenuItem>
                 <MenuItem value={20}>No</MenuItem>
             </Select>
            </Paper>
@@ -59,11 +66,14 @@ class Settings extends Component {
              <Select style={{position: 'absolute', right: 0}}
                 value={this.state.answer3}
                 onChange={this.handleChange}
+                displayEmpty
                 inputProps={{
                   name: 'answer3',
                   id: 'answer3-simple',
                 }}>
-                <MenuItem value={10}>Yes</MenuItem>
+                <MenuItem value="">
+                 <em>Yes</em>
+                  </MenuItem>
                 <MenuItem value={20}>No</MenuItem>
             </Select>
            </Paper>
@@ -73,11 +83,14 @@ class Settings extends Component {
              <Select style={{position: 'absolute', right: 0}}
                 value={this.state.answer4}
                 onChange={this.handleChange}
+                displayEmpty
                 inputProps={{
                   name: 'answer4',
                   id: 'answer4-simple',
                 }}>
-                <MenuItem value={10}>Yes</MenuItem>
+                <MenuItem value="">
+                 <em>Yes</em>
+                  </MenuItem>
                 <MenuItem value={20}>No</MenuItem>
             </Select>
            </Paper>

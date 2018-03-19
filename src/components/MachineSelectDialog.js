@@ -14,7 +14,7 @@ import { machineTypes, evalStatus } from "../fakeData"
 class MachineSelectDialog extends Component {
   state = {
     open: false,
-    start: "now",
+    start: "Now",
     futureTime: "3:30pm"
   };
 
@@ -113,7 +113,7 @@ class MachineSelectDialog extends Component {
             revs.push(this.props.machine);
             localStorage.setItem("reservations", JSON.stringify(revs));
             this.props.handleDialogClose(e);
-            this.props.sendSnackbarMsg("Reserved", {label: "View", link: "/my-reservations"});
+            this.props.sendSnackbarMsg("Reserved", {label: "View All", link: "/my-reservations"});
           }} variant="raised" color="primary" autoFocus>
             Reserve
           </Button>

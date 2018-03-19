@@ -4,7 +4,7 @@ import { Grid, Divider, List, ListItem, ListItemIcon, ListItemText, Paper, Typog
 import { InfoOutline, Announcement } from "material-ui-icons";
 
 const statuses = [
-  "Machines in used: 62/100",
+  "Machines in use: 62/100",
   "Number of people: 111/200",
 ];
 
@@ -29,7 +29,7 @@ class Dashboard extends Component {
                   <InfoOutline />
                 </ListItemIcon>
                 <Typography color="inherit" variant="title">
-                  <strong><ListItemText disableTypography primary="You gym status" /></strong>
+                  <strong><ListItemText disableTypography primary="Your gym status" /></strong>
                 </Typography>
               </ListItem>
               <Divider />
