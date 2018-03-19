@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Divider, InputAdornment, Input, InputLabel,
-  Button, Typography, Grid, Radio, TextField, FormControlLabel } from "material-ui";
+import { Divider, InputAdornment, Input, InputLabel, ListItemText, ListItemAvatar, List, ListItem, Avatar,
+  Button, Typography, Grid, Radio, TextField, FormControlLabel, Paper } from "material-ui";
 import Dialog, {
   DialogActions,
   DialogContent,
@@ -10,7 +10,7 @@ import Dialog, {
 
 import { withStyles } from "material-ui/styles";
 
-import StatusPopover from "./StatusPopover";
+import HelpPopover from "./HelpPopover";
 import { Up, StatusChip } from "./UtilComponents";
 import { machineTypes, evalStatus } from "../fakeData"
 
@@ -21,10 +21,17 @@ const styles = {
   }
 }
 
+const statusDesc = [
+  {name: "Available", desc: "Machine available", color: "#1ab394"},
+  {name: "Busy", desc: "Less than 5 people in queue", color: "#f8ac59"},
+  {name: "Full", desc: "Queue is full", color: "#ed5565"},
+  {name: "Unavailable", desc: "Machine unavailable", color: "#3f3f3f"},
+]
+
 class MachineSelectDialog extends Component {
   state = {
     open: false,
-    start: "Now",
+    start: "now",
     futureTime: "3:30pm"
   };
 
@@ -60,7 +67,32 @@ class MachineSelectDialog extends Component {
               </div>
               <div>
                 <strong>Status: </strong> {<StatusChip status={evalStatus(this.props.machine)} />}
-                <StatusPopover />
+                <HelpPopover
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}>
+                  <Paper style={{padding: "10px 5px 10px 5px"}}>
+                    <List dense>
+                      {statusDesc.map(st => {
+                        return (
+                          <ListItem key={st.name}>
+                            <ListItemAvatar>
+                              <Avatar style={{width: 25, height: 25, backgroundColor: st.color}}></Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={st.desc}
+                            />
+                          </ListItem>
+                        );
+                      })}
+                    </List>
+                  </Paper>
+                </HelpPopover>
               </div>
               <div>
                 <strong>Queue size: </strong>{this.props.machine.queueSize}
