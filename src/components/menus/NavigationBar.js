@@ -11,6 +11,7 @@ import { Dashboard, Assignment, Settings, Person, Notifications, ExitToApp } fro
 import treadmill from "../../treadmill.svg";
 import heisenberg from "../../heisenberg.jpg";
 import qrcode from "../../qrcode.png";
+import logo from "../../husky-logo.png";
 
 const styles = {
   root: {
@@ -133,7 +134,11 @@ class NavigationBar extends Component {
         </Drawer>
 
         <AppBar className={classes.root}>
-          <Toolbar>
+          <Toolbar style={{paddingLeft: 10}}>
+            <Link style={{paddingRight: 10}} to="/dashboard">
+              <img alt="logo" src={logo} style={{width: 40}} />
+            </Link>
+
             <Typography color="inherit" variant="title" className={classes.flex}>
               <strong>{titles[this.props.location.pathname]}</strong>
             </Typography>
