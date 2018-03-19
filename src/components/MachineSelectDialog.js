@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Divider, InputAdornment, Input, InputLabel,
+import { Divider, InputAdornment, Input, InputLabel, FormLabel, FormControl,
   Button, Typography, Grid, Radio, TextField, FormControlLabel } from "material-ui";
 import Dialog, {
   DialogActions,
@@ -8,9 +8,18 @@ import Dialog, {
   withMobileDialog,
 } from 'material-ui/Dialog';
 
+import { withStyles } from "material-ui/styles";
+
 import StatusPopover from "./StatusPopover";
 import { Up, StatusChip } from "./UtilComponents";
 import { machineTypes, evalStatus } from "../fakeData"
+
+const styles = {
+  fullWidth: {
+    width: "100%",
+    display: "block"
+  }
+}
 
 class MachineSelectDialog extends Component {
   state = {
@@ -24,7 +33,7 @@ class MachineSelectDialog extends Component {
   }
 
   render() {
-    const { fullScreen } = this.props;
+    const { fullScreen, classes } = this.props;
 
     return (
       <Dialog
@@ -71,37 +80,40 @@ class MachineSelectDialog extends Component {
 
             <Grid style={{marginTop: 12}} container justify="center">
               <Grid item xs={10}>
-                <FormControlLabel
-                  control={
-                    <Radio
-                      checked={this.state.start === "now"}
-                      onChange={this.handleStartChange}
-                      value="now"
-                    />
-                  }
-                  label="Now"
-                />
-                <FormControlLabel
-                  control={
-                    <Radio
-                      checked={this.state.start === "other"}
-                      onChange={this.handleStartChange}
-                      value="other"
-                    />
-                  }
-                  label="Later at"
-                />
-                <TextField
-                  onClick={() => this.setState({start: "other"})}
-                  disabled={this.state.start === "other" ? false : true}
-                  id="time" type="time" />
-                <InputLabel htmlFor="duration">Duration</InputLabel>
-                <br/>
-                <Input
-                  style={{maxWidth: 80}}
-                  value={20}
-                  endAdornment={<InputAdornment position="end">minutes</InputAdornment>}
-                />
+                <form>
+                  <InputLabel className={classes.fullWidth} htmlFor="">Choose start time:</InputLabel>
+                  <FormControlLabel
+                    control={
+                      <Radio
+                        checked={this.state.start === "now"}
+                        onChange={this.handleStartChange}
+                        value="now"
+                      />
+                    }
+                    label="Now"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Radio
+                        checked={this.state.start === "other"}
+                        onChange={this.handleStartChange}
+                        value="other"
+                      />
+                    }
+                    label="Later at"
+                  />
+                  <TextField
+                    onClick={() => this.setState({start: "other"})}
+                    disabled={this.state.start === "other" ? false : true}
+                    id="time" type="time" />
+                  <InputLabel className={classes.fullWidth} htmlFor="duration">Duration:</InputLabel>
+                  <Input
+                    style={{maxWidth: 80}}
+                    value={20}
+                    endAdornment={<InputAdornment position="end">minutes</InputAdornment>}
+                  />
+
+                </form>
               </Grid>
             </Grid>
           </Grid>
@@ -125,4 +137,4 @@ class MachineSelectDialog extends Component {
   }
 }
 
-export default withMobileDialog()(MachineSelectDialog);
+export default withStyles(styles)(withMobileDialog()(MachineSelectDialog));
