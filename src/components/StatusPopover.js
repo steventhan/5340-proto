@@ -1,16 +1,17 @@
 import React, { Component } from "react";
 import { findDOMNode } from "react-dom";
-import { IconButton, Divider, Popover, Paper, Grid, Typography } from "material-ui";
+import { Avatar, List, ListItem, ListItemAvatar, ListItemText,
+  IconButton, Divider, Popover, Paper, Grid, Typography } from "material-ui";
 import { HelpOutline } from "material-ui-icons";
 
 import { StatusChip } from "./UtilComponents";
 
 
 const statusDesc = [
-  {name: "Available", desc: "Machine available"},
-  {name: "Busy", desc: "Less than 5 people in queue"},
-  {name: "Full", desc: "At least 5 people in queue"},
-  {name: "Unavailable", desc: "Machine unavailable"},
+  {name: "Available", desc: "Machine available", color: "#1ab394"},
+  {name: "Busy", desc: "Less than 5 people in queue", color: "#f8ac59"},
+  {name: "Full", desc: "At least 5 people in queue", color: "#ed5565"},
+  {name: "Unavailable", desc: "Machine unavailable", color: "#3f3f3f"},
 ]
 
 class StatusPopover extends Component {
@@ -56,24 +57,20 @@ class StatusPopover extends Component {
           }}
         >
           <Paper style={{padding: "10px 5px 10px 5px"}}>
-            <Divider />
-            {statusDesc.map(st => {
-              return (
-                <div key={st.name}>
-                  <Grid style={{padding: 5}} container spacing={0}>
-                    <Grid xs={5} item>
-                      {<StatusChip status={st.name} />}
-                    </Grid>
-                    <Grid xs={7} item>
-                      <Typography>
-                        {st.desc}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                  <Divider />
-                </div>
-              )}
-            )}
+            <List dense>
+              {statusDesc.map(st => {
+                return (
+                  <ListItem key={st.name}>
+                    <ListItemAvatar>
+                      <Avatar style={{width: 25, height: 25, backgroundColor: st.color}}></Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={st.desc}
+                    />
+                  </ListItem>
+                );
+              })}
+            </List>
           </Paper>
         </Popover>
       </div>
