@@ -8,7 +8,7 @@ import floorMap from "../floor.png"
 import { KeyboardArrowUp, KeyboardArrowDown } from "material-ui-icons";
 
 const styles = {
-  levelButtons: {minWidth: 50, margin: 2}
+  levelButtons: {minWidth: 45, margin: 2}
 };
 
 class Reserve extends Component {
