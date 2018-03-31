@@ -6,9 +6,10 @@ import { AppBar, Avatar, Drawer, Toolbar, Grid, Typography, IconButton, Badge, D
 import {ListItem, ListItemIcon, ListItemText} from "material-ui/List";
 import { withStyles } from "material-ui/styles";
 import MenuIcon from 'material-ui-icons/Menu';
-import { Dashboard, Assignment, Settings, Person, Notifications, ExitToApp, Calendar } from 'material-ui-icons';
+import { Dashboard, Assignment, Settings, Person, Notifications, ExitToApp } from 'material-ui-icons';
 
 import HelpPopover from "../HelpPopover";
+import QRCodeReader from "../QRCodeReader";
 
 import treadmill from "../../treadmill.png";
 import heisenberg from "../../heisenberg.jpg";
@@ -37,21 +38,20 @@ const styles = {
 };
 
 const titles = {
-  "/dashboard": "Dashboard",
   "/reserve": "Reserve",
   "/my-reservations": "My reservations",
   "/settings" : "Settings",
   "/membership" : "Membership",
-  "/" : "Login",
+  "/" : "Dashboard",
 }
 
 const links = [
-  {path: "/dashboard", name: "Dashboard", icon: <Dashboard />},
+  {path: "/", name: "Dashboard", icon: <Dashboard />},
   {path: "/reserve", name: "Reserve", icon: <img alt="ss" src={treadmill} />},
   {path: "/my-reservations", name: "My reservations", icon: <Assignment />},
   {path: "/settings", name: "Settings", icon: <Settings />},
   {path: "/membership", name: "Membership", icon: <Person />},
-  {path: "/", name: "Logout", icon: <ExitToApp />},
+  {path: "/logout", name: "Logout", icon: <ExitToApp />},
 ]
 
 class UserProfile extends Component {
@@ -75,10 +75,22 @@ class UserProfile extends Component {
 
 
 class QRCode extends Component {
+  state = {
+    qrReaderOpen: false,
+  }
+
+  handleQrReaderOpen = (e) => {
+    e.stopPropagation();
+    this.setState({qrReaderOpen: true});
+  }
+
+
   render = () => {
     return (
       <div style={{paddingTop: "15%", paddingBottom: "10%"}}>
+        <QRCodeReader open={this.state.qrReaderOpen} onReaderClose={() => this.setState({qrReaderOpen: false})} />
         <Grid
+          onClick={this.handleQrReaderOpen}
           container
           direction="column"
           justify="center"
@@ -163,7 +175,7 @@ class NavigationBar extends Component {
 
         <AppBar className={classes.root}>
           <Toolbar style={{paddingLeft: 10}}>
-            <Link style={{paddingRight: 10}} to="/dashboard">
+            <Link style={{paddingRight: 10}} to="/">
               <img alt="logo" src={logo} style={{width: 40}} />
             </Link>
 
