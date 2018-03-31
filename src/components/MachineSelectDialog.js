@@ -7,6 +7,7 @@ import Dialog, {
   DialogTitle,
   withMobileDialog,
 } from 'material-ui/Dialog';
+import Moment from "moment"
 
 import { withStyles } from "material-ui/styles";
 
@@ -19,7 +20,7 @@ const styles = {
     width: "100%",
     display: "block"
   }
-}
+};
 
 const statusDesc = [
   {name: "Available", desc: "Machine available", color: "#1ab394"},
@@ -41,7 +42,6 @@ class MachineSelectDialog extends Component {
 
   render() {
     const { fullScreen, classes } = this.props;
-
     return (
       <Dialog
         fullScreen={fullScreen}
