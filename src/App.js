@@ -1,79 +1,31 @@
 /* eslint-disable no-unused-vars*/
 import React, { Component } from "react";
-import { findDOMNode } from "react-dom";
-import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
 import { IconButton, Popover, Typography, Button, Reboot, Snackbar } from "material-ui";
-import CloseIcon from "material-ui-icons/Close";
 import { MuiThemeProvider, createMuiTheme, withStyles } from "material-ui/styles";
 
-
-import NavigationBar from "./components/menus/NavigationBar";
+import PrivateRoute from "./components/PrivateRoute";
+import Menus from "./components/Menus";
 import Dashboard from "./components/Dashboard";
 import Reserve from "./components/Reserve";
 import MyReservations from "./components/MyReservations";
 import Settings from "./components/Settings";
 import Membership from "./components/Membership";
 import Login from "./components/Login";
-import FloatingButtonDialog from "./components/menus/FloatingButtonDialog";
-import startWorkout from "./start-workout.png";
 import './App.css';
 
 const theme = createMuiTheme();
 
-const styles = {
-  root: {
-    flexGrow: 1,
-  },
-  flex: {
-    flex: 1,
-  },
-  hamburger: {
-    marginRight: -12,
-  },
-  typography: {
-    margin: 10,
-  },
-  float: {
-    position: "fixed",
-    bottom: 15,
-    right: 15,
-    zIndex: 100,
-  }
-};
-
 class App extends Component {
   constructor(props) {
     super(props);
+    const user = JSON.parse(localStorage.getItem("user"));
     this.state = {
-      isLoggedIn: true,
+      isLoggedIn: user ? true : false,
       snackbarOpen : false,
       snackbarMsg : "",
       snackbarAction : {label: "", link: ""},
-      floatingButtonDialogOpen : false,
-      popoverOpen: false,
-      anchorEl: null,
     };
-  }
-
-  handleNotification = (anchor) => {
-    this.setState({
-      popoverOpen: true,
-      anchorEl: findDOMNode(anchor),
-    });
-  }
-
-  handlePopoverClose = (e) => {
-    this.setState({
-      popoverOpen: false,
-    });
-  }
-
-  handleFloatingButton = (e) => {
-    this.setState({floatingButtonDialogOpen : true});
-  }
-
-  handleFloatingButtonDialogClose = (e) => {
-    this.setState({floatingButtonDialogOpen : false});
   }
 
   handleSnackbarClose = (e) => {
@@ -93,91 +45,85 @@ class App extends Component {
     });
   }
 
-  handleLogin = () => {
+  handleGoogleLogin = (res) => {
+    localStorage.setItem("user", JSON.stringify(res))
     this.setState({isLoggedIn: true})
-  }
-
-  handleLogout = () => {
-    this.setState({isLoggedIn: false})
+    console.log(res.isSignedIn());
   }
 
   render() {
-    const classes = this.props.classes;
     return (
       // <MuiThemeProvider theme={theme}>
-        <BrowserRouter>
+        <Router>
           <div>
-          <Reboot />
-          <Switch>
-            <Route exact path="/" render={() => <Login onLogout={this.handleLogout} onLogin={this.handleLogin} />} />
+            <Reboot />
             {this.state.isLoggedIn &&
-            <div>
-              <NavigationBar onLogout={this.handLogout} onNotificationClick={this.handleNotification}/>
-              <Popover
-                open={this.state.popoverOpen}
-                anchorEl={this.state.anchorEl}
-                anchorReference="anchorEl"
-                onClose={this.handlePopoverClose}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "right",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-              >
-                <Typography style={{padding: 10}}>You have some notifications...</Typography>
-              </Popover>
-              <Button
-                style={this.state.snackbarOpen ? {display: "none"} : {}}
-                onClick={this.handleFloatingButton}
-                variant="fab" color="primary" className={classes.float}>
-                <img src={startWorkout} alt="ss" width="65%" />
-              </Button>
-              <FloatingButtonDialog
-                open={this.state.floatingButtonDialogOpen}
-                handleDialogClose={this.handleFloatingButtonDialogClose}
+            <Menus
+              snackbarOpen={this.state.snackbarOpen}
+              snackbarMsg={this.state.snackbarMsg}
+              snackbarAction={this.state.snackbarAction}
+              onSnackbarClose={this.handleSnackbarClose}
+              onLogout={this.handleLogout}
+            />}
+
+            <Switch>
+              <Route
+                exact
+                path="/login"
+                render={props => (
+                  <Login
+                    {...props}
+                    isLoggedIn={this.state.isLoggedIn}
+                    onGoogleLogin={this.handleGoogleLogin}
+                  />
+                )}
               />
-              <Snackbar
-                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                open={this.state.snackbarOpen}
-                autoHideDuration={5000}
-                onClose={this.handleSnackbarClose}
-                message={<span id="message-id">{this.state.snackbarMsg}</span>}
-                action={[
-                  <Button
-                    key="action"
-                    component={Link}
-                    color="secondary"
-                    size="small"
-                    to={this.state.snackbarAction.link}
-                    onClick={this.handleClose}>
-                    {this.state.snackbarAction.label}
-                  </Button>,
-                  <IconButton
-                    key="close"
-                    aria-label="Close"
-                    color="inherit"
-                    onClick={this.handleSnackbarClose}
-                  >
-                    <CloseIcon />
-                  </IconButton>,
-                ]}
+              <Route
+                exact
+                path="/logout"
+                render={props => {
+                  localStorage.removeItem("user");
+                  this.setState({isLoggedIn: false})
+                  return <Redirect to="/login" />;
+                }}
               />
-              <Route exact path="/dashboard" component={Dashboard} />
-              <Route exact path="/reserve" render={() => <Reserve sendSnackbarMsg={this.sendSnackbarMsg}/>} />
-              <Route exact path="/my-reservations" render={() => <MyReservations sendSnackbarMsg={this.sendSnackbarMsg}/>} />
-              <Route exact path="/settings" component={Settings} />
-              <Route exact path="/membership" component={Membership} />
-            </div>}
-            <Route render={() => <Login onLogout={this.handleLogout} onLogin={this.handleLogin} />} />
-          </Switch>
-        </div>
-        </BrowserRouter>
+
+              <PrivateRoute
+                exact
+                path="/"
+                component={Dashboard}
+                isLoggedIn={this.state.isLoggedIn}
+              />
+              <PrivateRoute
+                exact
+                path="/reserve"
+                isLoggedIn={this.state.isLoggedIn}
+                render={props => <Reserve {...props} sendSnackbarMsg={this.sendSnackbarMsg}/>}
+              />
+              <PrivateRoute
+                exact
+                path="/my-reservations"
+                isLoggedIn={this.state.isLoggedIn}
+                render={props => <MyReservations {...props} sendSnackbarMsg={this.sendSnackbarMsg}/>}
+              />
+              <PrivateRoute
+                exact
+                path="/settings"
+                component={Settings}
+                isLoggedIn={this.state.isLoggedIn}
+              />
+              <PrivateRoute
+                exact
+                path="/membership"
+                component={Membership}
+                isLoggedIn={this.state.isLoggedIn}
+              />
+            </Switch>
+          </div>
+        </Router>
       // </MuiThemeProvider>
     );
   }
 }
 
-export default withStyles(styles)(App);
+export default App;
