@@ -48,7 +48,6 @@ class App extends Component {
   handleGoogleLogin = (res) => {
     localStorage.setItem("user", JSON.stringify(res))
     this.setState({isLoggedIn: true})
-    console.log(res.isSignedIn());
   }
 
   render() {
@@ -78,9 +77,7 @@ class App extends Component {
                   />
                 )}
               />
-              <Route
-                exact
-                path="/logout"
+              <Route exact path="/logout"
                 render={props => {
                   localStorage.removeItem("user");
                   this.setState({isLoggedIn: false})
@@ -88,36 +85,15 @@ class App extends Component {
                 }}
               />
 
-              <PrivateRoute
-                exact
-                path="/"
-                component={Dashboard}
-                isLoggedIn={this.state.isLoggedIn}
+              <PrivateRoute exact path="/" component={Dashboard} isLoggedIn={this.state.isLoggedIn} />
+              <PrivateRoute exact path="/reserve" isLoggedIn={this.state.isLoggedIn}
+                render={props => <Reserve {...props} sendSnackbarMsg={this.sendSnackbarMsg} />}
               />
-              <PrivateRoute
-                exact
-                path="/reserve"
-                isLoggedIn={this.state.isLoggedIn}
-                render={props => <Reserve {...props} sendSnackbarMsg={this.sendSnackbarMsg}/>}
+              <PrivateRoute exact path="/my-reservations" isLoggedIn={this.state.isLoggedIn}
+                render={props => <MyReservations {...props} sendSnackbarMsg={this.sendSnackbarMsg} />}
               />
-              <PrivateRoute
-                exact
-                path="/my-reservations"
-                isLoggedIn={this.state.isLoggedIn}
-                render={props => <MyReservations {...props} sendSnackbarMsg={this.sendSnackbarMsg}/>}
-              />
-              <PrivateRoute
-                exact
-                path="/settings"
-                component={Settings}
-                isLoggedIn={this.state.isLoggedIn}
-              />
-              <PrivateRoute
-                exact
-                path="/membership"
-                component={Membership}
-                isLoggedIn={this.state.isLoggedIn}
-              />
+              <PrivateRoute exact path="/settings" component={Settings} isLoggedIn={this.state.isLoggedIn} />
+              <PrivateRoute exact path="/membership" component={Membership} isLoggedIn={this.state.isLoggedIn} />
             </Switch>
           </div>
         </Router>

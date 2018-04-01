@@ -7,7 +7,6 @@ import Dialog, {
   DialogTitle,
   withMobileDialog,
 } from 'material-ui/Dialog';
-import Moment from "moment"
 
 import { withStyles } from "material-ui/styles";
 
