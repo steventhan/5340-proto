@@ -19,7 +19,7 @@ const styles = {
 };
 
 class QRCodeReader extends Component {
-  constructor(props){
+  constructor(props) {
     super(props)
     this.state = {
       delay: 300,
@@ -38,7 +38,8 @@ class QRCodeReader extends Component {
   handleError = (err) => {
     console.error(err);
   }
-  render(){
+
+  render() {
     const { fullScreen } = this.props;
     return (
       <Dialog
@@ -57,6 +58,7 @@ class QRCodeReader extends Component {
             onError={this.handleError}
             onScan={this.handleScan}
             style={{ width: '100%' }}
+            facingMode="environment"
           />
           <p>{this.state.result}</p>
         </DialogContent>
