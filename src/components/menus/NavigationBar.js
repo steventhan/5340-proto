@@ -87,7 +87,7 @@ class QRCode extends Component {
 
   render = () => {
     return (
-      <div style={{paddingTop: "15%", paddingBottom: "10%"}}>
+      <div style={{ marginBottom: 55 }}>
         <QRCodeReader open={this.state.qrReaderOpen} onReaderClose={() => this.setState({qrReaderOpen: false})} />
         <Grid
           onClick={this.handleQrReaderOpen}
@@ -120,7 +120,7 @@ class QRCode extends Component {
                 horizontal: "center",
               }}>
               <Typography style={{padding: 10}} variant="body1">
-                Scan your QR code at the reserved machine to start your workout session
+                Scan QR code at the reserved machine to start your workout session
               </Typography>
             </HelpPopover>
           </Grid>
@@ -157,20 +157,23 @@ class NavigationBar extends Component {
           open={this.state.drawerOpen}
           onClose={this.toggleDrawer}
           onClick={this.toggleDrawer}>
-          <UserProfile />
-          <Divider />
-          {links.map((l, i) => {
-            return (
-              <ListItem component={Link} to={l.path} key={i} button>
-                <ListItemIcon>
-                  {l.icon}
-                </ListItemIcon>
-                <ListItemText primary={l.name} />
-              </ListItem>
-            )
-          })}
-          <Divider />
-          <QRCode />
+          <div>
+            <UserProfile />
+            <Divider />
+            {links.map((l, i) => {
+              return (
+                <ListItem component={Link} to={l.path} key={i} button>
+                  <ListItemIcon>
+                    {l.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={l.name} />
+                </ListItem>
+              )
+            })}
+            <Divider />
+            <QRCode />
+
+          </div>
         </Drawer>
 
         <AppBar className={classes.root}>
