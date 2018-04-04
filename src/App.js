@@ -50,7 +50,8 @@ class App extends Component {
   }
 
   handleGoogleLogin = (res) => {
-    localStorage.setItem("user", JSON.stringify(res))
+    if (!res.tokenObj) return;
+    localStorage.setItem("user", JSON.stringify(res.profileObj))
     this.setState({isLoggedIn: true})
   }
 
