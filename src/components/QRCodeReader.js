@@ -22,13 +22,14 @@ class QRCodeReader extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      delay: 300,
-      result: 'No result',
+      delay: 100,
+      result: "No result",
     }
   }
 
   handleScan = (data) => {
-    if (data) {
+    console.log(data);
+    if (data && data.includes("marino-")) {
       this.setState({
         result: data,
       });
@@ -65,9 +66,6 @@ class QRCodeReader extends Component {
         <DialogActions>
           <Button onClick={this.props.onReaderClose} variant="raised" color="default">
             Discard
-          </Button>
-          <Button variant="raised" color="primary" autoFocus>
-            Reserve
           </Button>
         </DialogActions>
       </Dialog>
