@@ -12,7 +12,7 @@ import HelpPopover from "../HelpPopover";
 import QRCodeReader from "../QRCodeReader";
 
 import treadmill from "../../treadmill.png";
-import heisenberg from "../../heisenberg.jpg";
+// import heisenberg from "../../heisenberg.jpg";
 import qrcode from "../../qrcode.png";
 import logo from "../../husky-logo.png";
 
@@ -56,6 +56,7 @@ const links = [
 
 class UserProfile extends Component {
   render = () => {
+    const user = JSON.parse(localStorage.getItem("user"));
     return (
       <Grid
         container
@@ -64,8 +65,8 @@ class UserProfile extends Component {
         alignItems="center"
         spacing={0}>
         <Grid item style={{paddingTop: "12%", paddingBottom: "10%"}}>
-          <Avatar alt="heisenberg" style={{width: 100, height: 100}} src={heisenberg} />
-          <Typography align="center" variant="body1">Walter White</Typography>
+          <Avatar alt="heisenberg" style={{width: 100, height: 100}} src={user.imageUrl} />
+          <Typography align="center" variant="body1">{user.name}</Typography>
         </Grid>
       </Grid>
     );

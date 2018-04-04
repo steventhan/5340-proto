@@ -53,7 +53,7 @@ class ReservationModifyDialog extends Component {
   componentWillReceiveProps(nextProps) {
     if (!nextProps.reservationId) return;
     axios.get(`/api/reservations/${nextProps.reservationId}`, {
-        params: {user: "123456789"}
+        params: { user: JSON.parse(localStorage.getItem("user")).googleId }
       })
       .then(res => {
         this.setState({ reservation: res.data })
@@ -73,7 +73,7 @@ class ReservationModifyDialog extends Component {
 
   handleCancel = (e) => {
     axios.delete(`/api/reservations/${this.state.reservation._id}`, {
-    	data: {user: "123456789"},
+    	data: { user: JSON.parse(localStorage.getItem("user")).googleId },
     })
     .then(res => {
       this.setState(

@@ -45,7 +45,7 @@ class MachineSelectDialog extends Component {
     }
 
     axios.get(`/api/machines/${nextProps.machineId}`, {
-      params: {user: "123456789"}
+      params: { user: JSON.parse(localStorage.getItem("user")).googleId }
     }).then(res => {
       this.setState({ machine: res.data })
     }).catch(err => {
@@ -57,7 +57,7 @@ class MachineSelectDialog extends Component {
 
   fetchTimeSlots = (machineId, selectedDate) => {
     axios.get(`/api/machines/${machineId}/${selectedDate.format()}`, {
-      params: {user: "123456789"}
+      params: {user: JSON.parse(localStorage.getItem("user")).googleId}
     }).then(res => {
         let slots = res.data.map(s => {
           s.start = moment(s.start);
@@ -98,7 +98,7 @@ class MachineSelectDialog extends Component {
       return;
     }
     axios.post("/api/reservations", {
-    	"user": "123456789",
+    	"user": JSON.parse(localStorage.getItem("user")).googleId,
       "start": moment(this.state.start).format(),
       "end": moment(this.state.end).format(),
     	"machine": this.props.machineId,

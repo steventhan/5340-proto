@@ -32,7 +32,7 @@ class Reserve extends Component {
 
   fetchMachines() {
     axios.get("/api/machines", {
-        params: { user: "123456789" }
+        params: { user: JSON.parse(localStorage.getItem("user")).googleId }
       })
       .then(res => {
         this.setState({ machines: res.data })

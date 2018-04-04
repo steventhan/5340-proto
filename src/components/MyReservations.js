@@ -73,7 +73,7 @@ class MyReservations extends Component {
 
   fetchReservations = () => {
     axios.get("/api/reservations", {
-        params: {user: "123456789"}
+        params: {user: JSON.parse(localStorage.getItem("user")).googleId}
       })
       .then(res => {
         this.setState({reservations: res.data})
