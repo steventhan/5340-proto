@@ -3,6 +3,10 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
 import { IconButton, Popover, Typography, Button, Reboot, Snackbar } from "material-ui";
 import { MuiThemeProvider, createMuiTheme, withStyles } from "material-ui/styles";
+import MomentUtils from 'material-ui-pickers/utils/moment-utils';
+import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
+import moment from "moment";
+
 
 import PrivateRoute from "./components/PrivateRoute";
 import Menus from "./components/Menus";
@@ -52,7 +56,7 @@ class App extends Component {
 
   render() {
     return (
-      // <MuiThemeProvider theme={theme}>
+      <MuiPickersUtilsProvider utils={MomentUtils}>
         <Router>
           <div>
             <Reboot />
@@ -97,7 +101,7 @@ class App extends Component {
             </Switch>
           </div>
         </Router>
-      // </MuiThemeProvider>
+      </MuiPickersUtilsProvider>
     );
   }
 }
