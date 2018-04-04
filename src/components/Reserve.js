@@ -106,12 +106,10 @@ class Reserve extends Component {
           <Grid xs={12} item>
             {this.state.currentTab === 0 &&
               <List>
-                {this.state.machines.filter(m => {
-                  return ["Available", "Busy"].includes(evalStatus(m))
-                      && !JSON.parse(localStorage.getItem("reservations")).reduce((prev, cur) => {
-                    return prev || cur._id === m._id;
-                  }, false);
-                }).map(m => {
+                {this.state.machines
+                  .filter(m => {
+                    return ["Available", "Busy"].includes(evalStatus(m));
+                  }).map(m => {
                   return (
                     <Button
                       onClick={(e) => this.handleMachineSelection(e, m._id)}

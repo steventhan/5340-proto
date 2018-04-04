@@ -104,16 +104,26 @@ class MachineSelectDialog extends Component {
     	"machine": this.props.machineId,
     })
     .then(res => {
-      this.setState({ start: "", startSelected: true }, () => {
+      this.setState({
+        start: "",
+        startSelected: true,
+        end: "",
+        endSelected: true
+      }, () => {
         this.props.handleDialogClose(e);
         this.props.sendSnackbarMsg("Reserved", {label: "View All", link: "/my-reservations"});
-      })
+      });
     })
     .catch(err => {
-      this.setState({ start: "", startSelected: true }, () => {
+      this.setState({
+        start: "",
+        startSelected: true,
+        end: "",
+        endSelected: true
+      }, () => {
         this.props.handleDialogClose(e);
         this.props.sendSnackbarMsg(err.response.data);
-      })
+      });
     })
   }
 
@@ -277,7 +287,12 @@ class MachineSelectDialog extends Component {
         </DialogContent>}
         <DialogActions>
           <Button
-            onClick={() => this.setState({ start: "", startSelected: true }, this.props.handleDialogClose)}
+            onClick={() => this.setState({
+              start: "",
+              startSelected: true,
+              end: "",
+              endSelected: true
+            }, this.props.handleDialogClose)}
             variant="raised" color="default"
           >
             Discard
