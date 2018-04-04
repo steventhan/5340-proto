@@ -1,44 +1,47 @@
 import React, { Component } from "react";
 import { AppBar, Card, CardContent, Typography,
    Grid, List, Tabs, Tab, Button, MenuItem, Select } from "material-ui";
+import axios from "axios";
+import moment from "moment";
+
 import ReservationModifyDialog from "./ReservationModifyDialog";
-import { machines, machineTypes} from "../fakeData";
+import { machineTypes} from "../fakeData";
 
 
-class MachineList extends Component {
+class ReservationList extends Component {
   render = () => {
     return (
       <List>
-        {this.props.machines.map(m => {
+        {this.props.reservations.map(r => {
           return (
             <Button
-              onClick={(e) => this.props.onMachineClick(e, m.id)}
-              key={m.id}
+              onClick={(e) => this.props.onMachineClick(e, r._id)}
+              key={r._id}
               style={{padding: 3, textAlign: "left", textTransform: "None"}}>
               <Card>
                 <CardContent>
                   <Grid container spacing={0} justify="center" alignItems="center">
                     <Grid item xs={4}>
-                      <img alt="machine" src={machineTypes[m.type]} style={{width: "90%"}}/>
+                      <img alt="machine" src={machineTypes[r.machine.type]} style={{width: "90%"}}/>
                     </Grid>
                     <Grid item xs={8}>
                       <Typography component="p">
-                        <strong>ID: </strong>{`${m.id}`}
+                        <strong>ID: </strong>{r.machine._id}
                       </Typography>
                       <Typography component="p">
-                        <strong>Type: </strong>{`${m.type}`}
+                        <strong>Type: </strong>{r.machine.type}
                       </Typography>
                       <Typography component="p">
-                        <strong>Start: </strong>1:30pm
+                        <strong>Start: </strong>{moment(r.start).format("MM/DD/YYYY - HH:mm")}
                       </Typography>
                       <Typography component="p">
-                        <strong>End: </strong>1:50pm
+                        <strong>End: </strong>{moment(r.end).format("MM/DD/YYYY HH:mm")}
                       </Typography>
                       <Typography component="p">
-                        <strong>Duration: </strong>20 minutes
+                        <strong>Duration: </strong>{moment(r.end).diff(moment(r.start), "minutes")} minutes
                       </Typography>
                       <Typography component="p">
-                        <strong>Description: </strong>{`${m.description}`}
+                        <strong>Description: </strong>{r.machine.description}
                       </Typography>
                     </Grid>
                   </Grid>
@@ -60,19 +63,40 @@ class MyReservations extends Component {
       currentTab: 0,
       machineTypes: [],
       dialogOpen: false,
-      selectedMachine: machines[0]
+      reservations: [],
     };
+  }
+
+  componentDidMount() {
+    this.fetchReservations();
+  }
+
+  fetchReservations = () => {
+    axios.get("/api/reservations", {
+        params: {user: "123456789"}
+      })
+      .then(res => {
+        this.setState({reservations: res.data})
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   handleReservationModify = (e, id) => {
     this.setState({
       dialogOpen: true,
-      selectedMachine: machines.filter(m => m.id === id)[0]
+      reservationId: id
     });
   }
 
-  handleDialogClose = () => {
-    this.setState({dialogOpen: false});
+  handleDialogClose = (e, deleted) => {
+    this.setState({dialogOpen: false, reservationId: undefined}, () => {
+      if (deleted) {
+        this.props.sendSnackbarMsg("Cancelled");
+      }
+    });
+    this.fetchReservations();
   }
 
   handleTabChange = (e, val) => {
@@ -111,21 +135,21 @@ class MyReservations extends Component {
           </Grid>
           <Grid xs={12} item>
             {this.state.currentTab === 0 &&
-              <MachineList
-                machines={JSON.parse(localStorage.getItem("reservations"))}
+              <ReservationList
+                reservations={this.state.reservations}
                 onMachineClick={this.handleReservationModify}
               />}
             {this.state.currentTab === 1 &&
-              <MachineList
-                machines={machines}
+              <ReservationList
+                reservations={this.state.reservations}
                 onMachineClick={() => {}}
               />}
           </Grid>
         </Grid>
         <ReservationModifyDialog
           open={this.state.dialogOpen}
-          handleDialogClose={this.handleDialogClose}
-          machine={this.state.selectedMachine}
+          onDialogClose={this.handleDialogClose}
+          reservationId={this.state.reservationId}
           sendSnackbarMsg={this.props.sendSnackbarMsg}
         />
       </div>

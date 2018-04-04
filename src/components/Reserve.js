@@ -3,29 +3,43 @@ import { AppBar, Card, CardContent, Typography,
    Grid, List, Tabs, Tab, Button, MenuItem, Select } from "material-ui";
 import { withStyles } from "material-ui/styles";
 import { KeyboardArrowUp, KeyboardArrowDown } from "material-ui-icons";
+import axios from "axios";
 
 import MachineSelectDialog from "./MachineSelectDialog";
 import { StatusChip } from "./UtilComponents";
-import { machines, machineTypes, evalStatus } from "../fakeData";
+import { machineTypes, evalStatus } from "../fakeData";
 import floorMap from "../floor.png"
 
 const styles = {
   levelButtons: {minWidth: 45, margin: 2}
 };
 
+
 class Reserve extends Component {
   constructor(props) {
     super(props)
     this.state = {
       currentTab: 0,
+      machines: [],
       machineTypes: [],
       dialogOpen: false,
-      selectedMachine: machines[0]
     };
-    Object.keys(machineTypes).forEach((m, i) => {
-      this.state.machineTypes[i] = {m: false};
-    });
-    this.state.machineTypes[machineTypes.length-1] = true;
+  }
+
+  componentDidMount() {
+    this.fetchMachines();
+  }
+
+  fetchMachines() {
+    axios.get("/api/machines", {
+        params: { user: "123456789" }
+      })
+      .then(res => {
+        this.setState({ machines: res.data })
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   handleTabChange = (e, val) => {
@@ -35,12 +49,13 @@ class Reserve extends Component {
   handleMachineSelection = (e, id) => {
     this.setState({
       dialogOpen: true,
-      selectedMachine: machines.filter(m => m.id === id)[0]
+      machineId: id,
     });
   }
 
   handleDialogClose = (e, val) => {
-    this.setState({ dialogOpen: false });
+    this.fetchMachines();
+    this.setState({ dialogOpen: false, machineId: undefined });
   }
 
   render() {
@@ -91,16 +106,16 @@ class Reserve extends Component {
           <Grid xs={12} item>
             {this.state.currentTab === 0 &&
               <List>
-                {machines.filter(m => {
+                {this.state.machines.filter(m => {
                   return ["Available", "Busy"].includes(evalStatus(m))
                       && !JSON.parse(localStorage.getItem("reservations")).reduce((prev, cur) => {
-                    return prev || cur.id === m.id;
+                    return prev || cur._id === m._id;
                   }, false);
                 }).map(m => {
                   return (
                     <Button
-                      onClick={(e) => this.handleMachineSelection(e, m.id)}
-                      key={m.id}
+                      onClick={(e) => this.handleMachineSelection(e, m._id)}
+                      key={m._id}
                       style={{padding: 3, textAlign: "left", textTransform: "None"}}>
                       <Card>
                         <CardContent>
@@ -110,7 +125,7 @@ class Reserve extends Component {
                             </Grid>
                             <Grid item xs={8}>
                               <Typography component="p">
-                                <strong>ID: </strong>{m.id}
+                                <strong>ID: </strong>{m._id}
                               </Typography>
                               <Typography component="p">
                                 <strong>Type: </strong>{m.type}
@@ -138,7 +153,7 @@ class Reserve extends Component {
         <MachineSelectDialog
           open={this.state.dialogOpen}
           handleDialogClose={this.handleDialogClose}
-          machine={this.state.selectedMachine}
+          machineId={this.state.machineId}
           sendSnackbarMsg={this.props.sendSnackbarMsg}
         />
       </div>

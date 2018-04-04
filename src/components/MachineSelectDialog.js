@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
-import { Divider, InputAdornment, Input, InputLabel, ListItemText, ListItemAvatar, List, ListItem, Avatar,
-  Button, Typography, Grid, Radio, TextField, FormControlLabel, Paper } from "material-ui";
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  withMobileDialog,
-} from 'material-ui/Dialog';
-
+import { Divider, InputAdornment, InputLabel, ListItemText,
+  ListItemAvatar, List, ListItem, Avatar, Button, Typography, Grid,
+  Paper, IconButton, Icon, Select, FormHelperText, FormControl, CircularProgress } from "material-ui";
+import Dialog, { DialogActions, DialogContent,
+  DialogTitle, withMobileDialog } from 'material-ui/Dialog';
 import { withStyles } from "material-ui/styles";
+import { DatePicker } from "material-ui-pickers";
+import axios from "axios";
+import moment from "moment";
 
 import HelpPopover from "./HelpPopover";
 import { Up, StatusChip } from "./UtilComponents";
@@ -30,17 +29,110 @@ const statusDesc = [
 
 class MachineSelectDialog extends Component {
   state = {
-    open: false,
-    start: "now",
-    futureTime: "3:30pm"
+    selectedDate: moment(),
+    timeSlots: [],
+    start: "",
+    end: "",
+    startSelected: true,
+    endSelected: true,
+    machine: undefined
   };
 
+  componentWillReceiveProps(nextProps){
+    if (!nextProps.machineId) {
+      this.setState({machine: undefined});
+      return;
+    }
+
+    axios.get(`/api/machines/${nextProps.machineId}`, {
+      params: {user: "123456789"}
+    }).then(res => {
+      this.setState({ machine: res.data })
+    }).catch(err => {
+      console.log(err);
+    });
+    this.fetchTimeSlots(nextProps.machineId, this.state.selectedDate);
+
+  }
+
+  fetchTimeSlots = (machineId, selectedDate) => {
+    axios.get(`/api/machines/${machineId}/${selectedDate.format()}`, {
+      params: {user: "123456789"}
+    }).then(res => {
+        let slots = res.data.map(s => {
+          s.start = moment(s.start);
+          s.end = moment(s.end);
+          return s;
+        });
+        this.setState({ timeSlots: slots });
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+
+  handleDateChange = (date) => {
+    this.setState({ selectedDate: date, timeSlots: [] });
+    this.fetchTimeSlots(this.props.machineId, date);
+  }
+
   handleStartChange = (e) => {
-    this.setState({start: e.target.value});
+    this.setState({
+      start: e.target.value,
+      startSelected: e.target.value !== ""
+    });
+  }
+
+  handleEndChange = (e) => {
+    this.setState({
+      end: e.target.value,
+      endSelected: e.target.value !== ""
+    });
+  }
+
+  handleReserve = (e) => {
+    if (this.state.start === "" || this.state.end === "") {
+      this.setState({
+        startSelected: this.state.start !== "",
+        endSelected: this.state.end !== ""
+      });
+      return;
+    }
+    axios.post("/api/reservations", {
+    	"user": "123456789",
+      "start": moment(this.state.start).format(),
+      "end": moment(this.state.end).format(),
+    	"machine": this.props.machineId,
+    })
+    .then(res => {
+      this.setState({ start: "", startSelected: true }, () => {
+        this.props.handleDialogClose(e);
+        this.props.sendSnackbarMsg("Reserved", {label: "View All", link: "/my-reservations"});
+      })
+    })
+    .catch(err => {
+      this.setState({ start: "", startSelected: true }, () => {
+        this.props.handleDialogClose(e);
+        this.props.sendSnackbarMsg(err.response.data);
+      })
+    })
   }
 
   render() {
-    const { fullScreen, classes } = this.props;
+    const { fullScreen } = this.props;
+    const { selectedDate } = this.state;
+    let possibleEndTimes = [];
+
+    for (let s of this.state.timeSlots) {
+      if (
+        this.state.start !== "" &&
+        moment(this.state.start) <= s.start &&
+        s.start < moment(this.state.start).add(2, "h")
+      ) {
+        if (s.reserved) break;
+        possibleEndTimes.push(s);
+      }
+    }
+
     return (
       <Dialog
         fullScreen={fullScreen}
@@ -52,20 +144,25 @@ class MachineSelectDialog extends Component {
         <DialogTitle id="responsive-dialog-title">
             <strong>Machine information</strong>
         </DialogTitle>
+        {!this.state.machine &&
+        <DialogContent style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <CircularProgress  size={50} />
+        </DialogContent>}
+        {this.state.machine &&
         <DialogContent>
           <Grid container justify="center">
             <Grid item xs={5}>
-              <img alt="ss" src={machineTypes[this.props.machine.type]} style={{width: "100%"}}/>
+              <img alt="ss" src={machineTypes[this.state.machine.type]} style={{width: "100%"}}/>
             </Grid>
             <Grid item xs={7} style={{fontSize: "0.875rem", lineHeight: "1.4em"}}>
               <div>
-                <strong>ID: </strong>{this.props.machine.id}
+                <strong>ID: </strong>{this.state.machine._id}
               </div>
               <div >
-                <strong>Type: </strong>{this.props.machine.type}
+                <strong>Type: </strong>{this.state.machine.type}
               </div>
               <div>
-                <strong>Status: </strong> {<StatusChip status={evalStatus(this.props.machine)} />}
+                <strong>Status: </strong> {<StatusChip status={evalStatus(this.state.machine)} />}
                 <HelpPopover
                   anchorOrigin={{
                     vertical: "bottom",
@@ -93,9 +190,6 @@ class MachineSelectDialog extends Component {
                   </Paper>
                 </HelpPopover>
               </div>
-              <div>
-                <strong>Queue size: </strong>{this.props.machine.queueSize}
-              </div>
             </Grid>
 
             <Grid container justify="center">
@@ -103,63 +197,96 @@ class MachineSelectDialog extends Component {
                 <Typography variant="subheading"><strong>Description</strong></Typography>
                 <Divider/>
                 <Typography style={{paddingTop: 10, paddingBottom: 10}} component="p">
-                  {this.props.machine.description}
+                  {this.state.machine.description}
                 </Typography>
                 <Divider/>
               </Grid>
             </Grid>
 
             <Grid style={{marginTop: 12}} container justify="center">
-              <Grid item xs={10}>
-                <form>
-                  <InputLabel className={classes.fullWidth} htmlFor="">Choose start time:</InputLabel>
-                  <FormControlLabel
-                    control={
-                      <Radio
-                        checked={this.state.start === "now"}
-                        onChange={this.handleStartChange}
-                        value="now"
-                      />
-                    }
-                    label="Now"
+              <Grid item xs={8}>
+                  <DatePicker
+                    label="Date"
+                    value={selectedDate}
+                    autoOk
+                    disablePast
+                    maxDate={moment().add(5, "d")}
+                    onChange={this.handleDateChange}
+                    animateYearScrolling={false}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton>
+                            <Icon>event</Icon>
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
                   />
-                  <FormControlLabel
-                    control={
-                      <Radio
-                        checked={this.state.start === "other"}
-                        onChange={this.handleStartChange}
-                        value="other"
-                      />
-                    }
-                    label="Later at"
-                  />
-                  <TextField
-                    onClick={() => this.setState({start: "other"})}
-                    disabled={this.state.start === "other" ? false : true}
-                    id="time" type="time" />
-                  <InputLabel className={classes.fullWidth} htmlFor="duration">Duration:</InputLabel>
-                  <Input
-                    style={{maxWidth: 80}}
-                    value={20}
-                    endAdornment={<InputAdornment position="end">minutes</InputAdornment>}
-                  />
+              </Grid>
+            </Grid>
 
-                </form>
+            <Grid style={{marginTop: 12}} container justify="center">
+              <Grid item xs={8}>
+                <FormControl style={{width: "100%"}} error={!this.state.startSelected}>
+                  <InputLabel>Start</InputLabel>
+                  <Select
+                    native
+                    value={this.state.start}
+                    onChange={this.handleStartChange}
+                  >
+                    <option value="" />
+                    {this.state.timeSlots
+                      .filter(s => s.start > moment())
+                      .map(s => (
+                          <option
+                            key={s.start.format()}
+                            disabled={s.reserved}
+                            value={s.start.format()}>{s.start.format("hh:mm a")}
+                          </option>
+                        )
+                      )}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={8}>
+                <FormControl style={{width: "100%"}} error={!this.state.endSelected}>
+                  <InputLabel>End</InputLabel>
+                  <Select
+                    disabled={this.state.start === "" ? true : false}
+                    native
+                    value={this.state.end}
+                    onChange={this.handleEndChange}
+                  >
+                    <option value="" />
+                    {possibleEndTimes.map(s => (
+                        <option
+                          key={s.end.format()}
+                          disabled={s.reserved}
+                          value={s.end.format()}>{s.end.format("hh:mm a")}
+                        </option>
+                      ))
+                    }
+                  </Select>
+                </FormControl>
+                {this.state.start === "" &&
+                  <FormHelperText>Start time not selected</FormHelperText>}
               </Grid>
             </Grid>
           </Grid>
-        </DialogContent>
+        </DialogContent>}
         <DialogActions>
-          <Button onClick={this.props.handleDialogClose} variant="raised" color="default">
+          <Button
+            onClick={() => this.setState({ start: "", startSelected: true }, this.props.handleDialogClose)}
+            variant="raised" color="default"
+          >
             Discard
           </Button>
-          <Button onClick={(e) => {
-            let revs = JSON.parse(localStorage.getItem("reservations"));
-            revs.push(this.props.machine);
-            localStorage.setItem("reservations", JSON.stringify(revs));
-            this.props.handleDialogClose(e);
-            this.props.sendSnackbarMsg("Reserved", {label: "View All", link: "/my-reservations"});
-          }} variant="raised" color="primary" autoFocus>
+          <Button
+            onClick={this.handleReserve}
+            variant="raised" color="primary" autoFocus
+            disabled={this.state.machine ? false : true}
+          >
             Reserve
           </Button>
         </DialogActions>

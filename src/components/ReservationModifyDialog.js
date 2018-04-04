@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { withStyles } from "material-ui/styles";
-import { Divider, InputAdornment, Input, InputLabel,
-  Button, Typography, Grid, Radio, TextField, FormControlLabel } from 'material-ui';
+import { Divider, Button, Typography, Grid, CircularProgress } from 'material-ui';
 import Dialog, {
   DialogActions,
   DialogContent,
   DialogTitle,
   withMobileDialog,
 } from 'material-ui/Dialog';
+import axios from "axios";
+import moment from "moment";
 
 import { Up } from "./UtilComponents";
 import { machineTypes } from "../fakeData"
@@ -18,7 +19,7 @@ class ConfirmDialog extends Component {
       <div>
         <Dialog
           open={this.props.open}
-          onClose={this.props.handleDiscard}
+          onClose={this.props.onDiscard}
         >
           <DialogContent id="alert-dialog-title">{this.props.msg}</DialogContent>
           <DialogActions>
@@ -46,57 +47,63 @@ const styles = {
 
 class ReservationModifyDialog extends Component {
   state = {
-    start: "now",
-    futureTime: "3:30pm",
     confirmCancelationDialogOpen: false,
-    confirmSaveChangesDialogOpen: false
   };
 
-  handleStartChange = (e) => {
-    this.setState({start: e.target.value});
-  }
-
-  handleSave = (e) => {
-    this.setState({confirmCancelationDialogOpen: false, confirmSaveChangesDialogOpen: false});
-    this.props.sendSnackbarMsg("Saved");
-    this.props.handleDialogClose(e);
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.reservationId) return;
+    axios.get(`/api/reservations/${nextProps.reservationId}`, {
+        params: {user: "123456789"}
+      })
+      .then(res => {
+        this.setState({ reservation: res.data })
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   handleCancelConfirmation = (e) => {
-    this.setState({confirmCancelationDialogOpen: true});
+    this.setState({ confirmCancelationDialogOpen: true });
   }
 
-  handleDiscard = (e) => {
-    this.setState({confirmCancelationDialogOpen: false, confirmSaveChangesDialogOpen: false});
+  handleConfirmDialogDiscard = (e) => {
+    this.setState({ confirmCancelationDialogOpen: false });
   }
 
   handleCancel = (e) => {
-    this.setState({confirmCancelationDialogOpen: false, confirmSaveChangesDialogOpen: false});
-    this.props.sendSnackbarMsg("Cancelled");
-    let revs = JSON.parse(localStorage.getItem("reservations"));
-    localStorage.setItem("reservations", JSON.stringify(revs.filter(r => r.id !== this.props.machine.id)));
-    this.props.handleDialogClose(e);
+    axios.delete(`/api/reservations/${this.state.reservation._id}`, {
+    	data: {user: "123456789"},
+    })
+    .then(res => {
+      this.setState(
+        { confirmCancelationDialogOpen: false, reservation: undefined },
+        () => this.props.onDialogClose(e, true)
+      );
+    })
+    .catch(err => {
+      this.setState(
+        { confirmCancelationDialogOpen: false, reservation: undefined },
+        () => {
+          this.props.onDialogClose(e);
+          this.props.sendSnackbarMsg("Something went wrong");
+        }
+      );
+    })
   }
 
 
   render() {
-    const { fullScreen, classes } = this.props;
+    const { fullScreen } = this.props;
 
     return (
       <div>
         <ConfirmDialog
           open={this.state.confirmCancelationDialogOpen}
           onConfirm={this.handleCancel}
-          onDiscard={this.handleDiscard}
+          onDiscard={this.handleConfirmDialogDiscard}
           msg={"Are you sure you want to cancel this reservation?"}
           color="secondary"
-        />
-        <ConfirmDialog
-          open={this.state.confirmSaveChangesDialogOpen}
-          onConfirm={this.handleSave}
-          onDiscard={this.handleDiscard}
-          msg={"Are you sure you want to save the changes?"}
-          color="primary"
         />
         <Dialog
           fullScreen={fullScreen}
@@ -108,24 +115,33 @@ class ReservationModifyDialog extends Component {
           <DialogTitle id="responsive-dialog-title">
             <strong>Reservation detail</strong>
           </DialogTitle>
+          {!this.state.reservation &&
+          <DialogContent style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <CircularProgress  size={50} />
+          </DialogContent>}
+          {this.state.reservation &&
           <DialogContent>
             <Grid container justify="center">
-              <Grid item xs={4}>
-                <img alt="ss" src={machineTypes[this.props.machine.type]} style={{width: "100%"}}/>
+              <Grid item xs={5}>
+                <img alt="ss" src={machineTypes[this.state.reservation.machine.type]} style={{width: "100%"}}/>
               </Grid>
-              <Grid item xs={8}>
+              <Grid item xs={7}>
                 <Typography component="p">
-                  <strong>ID: </strong>{`${this.props.machine.id}`}
+                  <strong>ID: </strong>{this.state.reservation.machine._id}
                 </Typography>
                 <Typography component="p">
-                  <strong>Type: </strong>{`${this.props.machine.type}`}
+                  <strong>Type: </strong>{this.state.reservation.machine.type}
                 </Typography>
                 <Typography component="p">
-                  <strong>Queue size: </strong>{`${this.props.machine.queueSize}`}
+                  <strong>Start: </strong>{moment(this.state.reservation.start).format("MM/DD/YYYY - HH:mm")}
                 </Typography>
-                <Button onClick={this.handleCancelConfirmation} size="small" fullWidth variant="raised" color="secondary">
-                  Cancel reservation
-                </Button>
+                <Typography component="p">
+                  <strong>End: </strong>{moment(this.state.reservation.end).format("MM/DD/YYYY - HH:mm")}
+                </Typography>
+                <Typography component="p">
+                  <strong>Duration:&nbsp;
+                  </strong>{moment(this.state.reservation.end).diff(this.state.reservation.start, "minutes")} minutes
+                </Typography>
               </Grid>
 
               <Grid container justify="center">
@@ -133,59 +149,28 @@ class ReservationModifyDialog extends Component {
                   <Typography variant="subheading"><strong>Description</strong></Typography>
                   <Divider/>
                   <Typography style={{paddingTop: 10, paddingBottom: 10}} component="p">
-                    {`${this.props.machine.description}`}
+                    {this.state.reservation.machine.description}
                   </Typography>
                   <Divider/>
                 </Grid>
               </Grid>
-
-              <Grid style={{marginTop: 12}} container justify="center">
-                <Grid item xs={10}>
-                  <InputLabel className={classes.fullWidth} htmlFor="">Choose start time:</InputLabel>
-                  <FormControlLabel
-                    control={
-                      <Radio
-                        checked={this.state.start === "now"}
-                        onChange={this.handleStartChange}
-                        value="now"
-                      />
-                    }
-                    label="Now"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Radio
-                        checked={this.state.start === "other"}
-                        onChange={this.handleStartChange}
-                        value="other"
-                      />
-                    }
-                    label="Later at"
-                  />
-                  <TextField
-                    onClick={() => this.setState({start: "other"})}
-                    disabled={this.state.start === "other" ? false : true}
-                    id="time" type="time" />
-                  <InputLabel className={classes.fullWidth} htmlFor="duration">Duration:</InputLabel>
-                  <Input
-                    style={{maxWidth: 80}}
-                    value={20}
-                    endAdornment={<InputAdornment position="end">minutes</InputAdornment>}
-                  />
-                </Grid>
-              </Grid>
             </Grid>
-          </DialogContent>
+          </DialogContent>}
           <DialogActions>
-            <Button onClick={this.props.handleDialogClose} variant="raised" color="default">
+            <Button
+              onClick={() => this.setState({ reservation: undefined }, this.props.onDialogClose) }
+              variant="raised" color="default"
+            >
               Discard
             </Button>
             <Button
-              onClick={(e) => this.setState({confirmSaveChangesDialogOpen: true})}
+              onClick={(e) => this.setState({confirmCancelationDialogOpen: true})}
               variant="raised"
-              color="primary"
-              autoFocus>
-              Save changes
+              color="secondary"
+              autoFocus
+              disabled={this.state.reservation ? false : true}
+            >
+              Cancel reservation
             </Button>
           </DialogActions>
         </Dialog>
