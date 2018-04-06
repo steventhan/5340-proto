@@ -246,7 +246,7 @@ class ReservationModifyDialog extends Component {
             </Button>
 
             {this.state.reservation &&
-              ["upcoming", "started"].includes(this.state.reservation.status) === "upcoming" &&
+              ["upcoming", "started"].includes(this.state.reservation.status) &&
             <ButtonWithConfirm
               msg={ `Are you sure you want to ${action} this reservation?` }
               onClick={ this.handleActionButtonClick }
