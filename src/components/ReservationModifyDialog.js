@@ -11,7 +11,7 @@ import axios from "axios";
 import moment from "moment";
 
 import { Up } from "./UtilComponents";
-import { machineTypes } from "../fakeData"
+import { machineTypes, capitalize } from "../utils";
 
 class ConfirmDialog extends Component {
   render() {
@@ -33,6 +33,50 @@ class ConfirmDialog extends Component {
         </Dialog>
       </div>
     )
+  }
+}
+
+class ButtonWithConfirm extends Component {
+  state = {
+    confirmDialogOpen: false
+  }
+
+  handleConfirmDialogDiscard = e => {
+    this.setState({ confirmDialogOpen: false });
+  }
+
+  handleClick = e => {
+    this.setState({ confirmDialogOpen: true });
+  }
+
+  handleConfirmed = e => {
+    this.setState({ confirmDialogOpen: false }, () => {
+      this.props.onClick();
+    });
+  }
+
+
+  render() {
+    const { msg, onClick, color, ...rest } = this.props;
+
+    return (
+      <div>
+        <ConfirmDialog
+          open={ this.state.confirmDialogOpen }
+          onConfirm={ this.handleConfirmed }
+          onDiscard={ this.handleConfirmDialogDiscard }
+          msg={ msg }
+          color= { color }
+        />
+        <Button
+          onClick={ this.handleClick }
+          color={ color }
+          { ...rest }
+        >
+        </Button>
+
+      </div>
+    );
   }
 }
 
@@ -83,8 +127,7 @@ class ReservationModifyDialog extends Component {
     })
     .catch(err => {
       this.setState(
-        { confirmCancelationDialogOpen: false, reservation: undefined },
-        () => {
+        { confirmCancelationDialogOpen: false, reservation: undefined }, () => {
           this.props.onDialogClose(e);
           this.props.sendSnackbarMsg("Something went wrong");
         }
@@ -92,19 +135,54 @@ class ReservationModifyDialog extends Component {
     })
   }
 
+  handleEnd = (e, newStatus) => {
+    console.log(newStatus);
+    axios.patch(`/api/reservations/${this.state.reservation._id}`, {
+      user: JSON.parse(localStorage.getItem("user")).googleId,
+      status: newStatus
+    })
+    .then(res => {
+      console.log(res);
+      this.setState(
+        { reservation: undefined }, () => {
+          this.props.onDialogClose(e)
+          this.props.sendSnackbarMsg("Reservation ended");
+        }
+      );
+    })
+    .catch(err => {
+      this.setState(
+        { reservation: undefined }, () => {
+          this.props.onDialogClose(e);
+          this.props.sendSnackbarMsg("Something went wrong");
+        }
+      );
+    })
+  }
+
+  handleActionButtonClick = e => {
+    if (this.state.reservation.status === "started") {
+      this.handleEnd(e, "ended");
+    } else {
+      this.handleCancel(e);
+    }
+  }
+
 
   render() {
     const { fullScreen } = this.props;
+    let action = "";
+    if (this.state.reservation) {
+      const status = this.state.reservation.status;
+      if (status === "started") {
+        action = "end";
+      } else if (status === "upcoming") {
+        action = "cancel";
+      }
+    }
 
     return (
       <div>
-        <ConfirmDialog
-          open={this.state.confirmCancelationDialogOpen}
-          onConfirm={this.handleCancel}
-          onDiscard={this.handleConfirmDialogDiscard}
-          msg={"Are you sure you want to cancel this reservation?"}
-          color="secondary"
-        />
         <Dialog
           fullScreen={fullScreen}
           open={this.props.open}
@@ -133,14 +211,17 @@ class ReservationModifyDialog extends Component {
                   <strong>Type: </strong>{this.state.reservation.machine.type}
                 </Typography>
                 <Typography component="p">
+                  <strong>Status: </strong>{ capitalize(this.state.reservation.status) }
+                </Typography>
+                <Typography component="p">
                   <strong>Start: </strong>{moment(this.state.reservation.start).format("MM/DD/YYYY - HH:mm")}
                 </Typography>
                 <Typography component="p">
                   <strong>End: </strong>{moment(this.state.reservation.end).format("MM/DD/YYYY - HH:mm")}
                 </Typography>
                 <Typography component="p">
-                  <strong>Duration:&nbsp;
-                  </strong>{moment(this.state.reservation.end).diff(this.state.reservation.start, "minutes")} minutes
+                  <strong>Duration: </strong>
+                  {moment(this.state.reservation.end).diff(this.state.reservation.start, "minutes")} minutes
                 </Typography>
               </Grid>
 
@@ -163,15 +244,16 @@ class ReservationModifyDialog extends Component {
             >
               Discard
             </Button>
-            <Button
-              onClick={(e) => this.setState({confirmCancelationDialogOpen: true})}
+
+            {this.state.reservation && this.state.reservation.status === "upcoming" &&
+            <ButtonWithConfirm
+              msg={ `Are you sure you want to ${action} this reservation?` }
+              onClick={ this.handleActionButtonClick }
               variant="raised"
-              color="secondary"
-              autoFocus
-              disabled={this.state.reservation ? false : true}
+              color={ action === "end" ? "primary" : "secondary" }
             >
-              Cancel reservation
-            </Button>
+              { capitalize(action) } reservation
+            </ButtonWithConfirm>}
           </DialogActions>
         </Dialog>
       </div>

@@ -7,7 +7,7 @@ import axios from "axios";
 
 import MachineSelectDialog from "./MachineSelectDialog";
 import { StatusChip } from "./UtilComponents";
-import { machineTypes, evalStatus } from "../fakeData";
+import { machineTypes, evalStatus } from "../utils";
 import floorMap from "../floor.png"
 
 const styles = {

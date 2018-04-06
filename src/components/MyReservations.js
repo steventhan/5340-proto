@@ -5,14 +5,16 @@ import axios from "axios";
 import moment from "moment";
 
 import ReservationModifyDialog from "./ReservationModifyDialog";
-import { machineTypes} from "../fakeData";
+import { machineTypes, capitalize } from "../utils";
 
 
 class ReservationList extends Component {
   render = () => {
     return (
       <List>
-        {this.props.reservations.map(r => {
+        {this.props.reservations
+          .filter(r => moment(r.end) > moment())
+          .map(r => {
           return (
             <Button
               onClick={(e) => this.props.onMachineClick(e, r._id)}
@@ -32,6 +34,9 @@ class ReservationList extends Component {
                         <strong>Type: </strong>{r.machine.type}
                       </Typography>
                       <Typography component="p">
+                        <strong>Status: </strong>{ capitalize(r.status) }
+                      </Typography>
+                      <Typography component="p">
                         <strong>Start: </strong>{moment(r.start).format("MM/DD/YYYY - HH:mm")}
                       </Typography>
                       <Typography component="p">
@@ -39,9 +44,6 @@ class ReservationList extends Component {
                       </Typography>
                       <Typography component="p">
                         <strong>Duration: </strong>{moment(r.end).diff(moment(r.start), "minutes")} minutes
-                      </Typography>
-                      <Typography component="p">
-                        <strong>Description: </strong>{r.machine.description}
                       </Typography>
                     </Grid>
                   </Grid>

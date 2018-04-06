@@ -8,6 +8,8 @@ import Dialog, {
   withMobileDialog,
 } from 'material-ui/Dialog';
 
+import axios from "axios";
+
 import { withStyles } from "material-ui/styles";
 import { Up } from "./UtilComponents";
 
@@ -23,16 +25,28 @@ class QRCodeReader extends Component {
     super(props)
     this.state = {
       delay: 100,
-      result: "No result",
+      result: "",
     }
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.data === this.state.data) return;
+
+    axios.post("/api/qr", {
+      "user": JSON.parse(localStorage.getItem("user")).googleId,
+      "machine": this.state.data,
+    })
+    .then(res => {
+      this.props.onReaderClose();
+    })
+    .catch(err => {
+      console.log(err);
+    })
+  }
+
   handleScan = (data) => {
-    console.log(data);
     if (data && data.includes("marino-")) {
-      this.setState({
-        result: data,
-      });
+      this.setState({ data: data.split("-")[1] });
     }
   }
 

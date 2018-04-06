@@ -11,7 +11,7 @@ import moment from "moment";
 
 import HelpPopover from "./HelpPopover";
 import { Up, StatusChip } from "./UtilComponents";
-import { machineTypes, evalStatus } from "../fakeData"
+import { machineTypes, evalStatus } from "../utils"
 
 const styles = {
   fullWidth: {
@@ -56,7 +56,7 @@ class MachineSelectDialog extends Component {
   }
 
   fetchTimeSlots = (machineId, selectedDate) => {
-    axios.get(`/api/machines/${machineId}/${selectedDate.format()}`, {
+    axios.get(`/api/machines/${machineId}/time-slots/${selectedDate.format()}`, {
       params: {user: JSON.parse(localStorage.getItem("user")).googleId}
     }).then(res => {
         let slots = res.data.map(s => {
@@ -247,7 +247,7 @@ class MachineSelectDialog extends Component {
                   >
                     <option value="" />
                     {this.state.timeSlots
-                      .filter(s => s.start > moment())
+                      .filter(s => s.start > moment().subtract(20, "m"))
                       .map(s => (
                           <option
                             key={s.start.format()}
