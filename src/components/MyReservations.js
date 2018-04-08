@@ -36,10 +36,10 @@ class ReservationList extends Component {
                         <strong>Status: </strong>{ capitalize(r.status) }
                       </Typography>
                       <Typography component="p">
-                        <strong>Start: </strong>{moment(r.start).format("MM/DD/YYYY - HH:mm")}
+                        <strong>Start: </strong>{moment(r.start).format("MM/DD/YYYY - hh:mm a")}
                       </Typography>
                       <Typography component="p">
-                        <strong>End: </strong>{moment(r.end).format("MM/DD/YYYY HH:mm")}
+                        <strong>End: </strong>{moment(r.end).format("MM/DD/YYYY - hh:mm a")}
                       </Typography>
                       <Typography component="p">
                         <strong>Duration: </strong>{moment(r.end).diff(moment(r.start), "minutes")} minutes
