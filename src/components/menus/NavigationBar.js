@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { withRouter } from "react-router";
 
-import { AppBar, Avatar, Drawer, Toolbar, Grid, Typography, IconButton, Badge, Divider } from "material-ui";
+import { AppBar, Drawer, Toolbar, Grid, Typography, IconButton, Badge, Divider } from "material-ui";
 import {ListItem, ListItemIcon, ListItemText} from "material-ui/List";
 import { withStyles } from "material-ui/styles";
 import MenuIcon from 'material-ui-icons/Menu';
@@ -64,7 +64,7 @@ class UserProfile extends Component {
         alignItems="center"
         spacing={0}>
         <Grid item style={{paddingTop: "12%", paddingBottom: "10%"}}>
-          <Avatar alt="heisenberg" style={{width: 100, height: 100}} src={user.imageUrl} />
+          <img alt="heisenberg" style={{width: 100, height: 100, margin: 10}} src={user.imageUrl} />
           <Typography align="center" variant="body1">{user.name}</Typography>
         </Grid>
       </Grid>
