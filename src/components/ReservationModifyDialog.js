@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from "material-ui/styles";
+import { Link } from "react-router-dom";
 import { Divider, Button, Typography, Grid, CircularProgress } from 'material-ui';
 import Dialog, {
   DialogActions,
@@ -236,16 +237,26 @@ class ReservationModifyDialog extends Component {
                 </Grid>
               </Grid>
 
+              {this.state.reservation.status === "upcoming" &&
               <Grid container justify="center" style={{ "marginTop": 10 }}>
                 <Grid item xs={12}>
-                  <Typography variant="subheading"><strong>How to start</strong></Typography>
-                  <Divider/>
-                  <Typography style={{paddingTop: 10, paddingBottom: 10}} component="p">
-                    Scan the qr code or request a check-in code
-                  </Typography>
-                  <Divider/>
+                  <Typography variant="subheading"><strong>Use one of these options to check in</strong></Typography>
                 </Grid>
-              </Grid>
+              </Grid>}
+
+              {this.state.reservation.status === "upcoming" &&
+              <Grid container justify="center" style={{ "marginTop": 10 }}>
+                <Grid item xs={6} style={{ display: "flex" }}>
+                  <Button fullWidth variant="raised">
+                    Check-in code
+                  </Button>
+                </Grid>
+                <Grid item xs={6}>
+                  <Button component={ Link } to="/qr" fullWidth variant="raised">
+                    Scan qr
+                  </Button>
+                </Grid>
+              </Grid>}
 
             </Grid>
           </DialogContent>}
