@@ -1,17 +1,11 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 import QrReader from "react-qr-reader";
-import { Button } from "material-ui";
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  withMobileDialog,
-} from 'material-ui/Dialog';
+import { Typography } from "material-ui";
 
 import axios from "axios";
 
 import { withStyles } from "material-ui/styles";
-import { Up } from "./UtilComponents";
 
 const styles = {
   fullWidth: {
@@ -37,7 +31,7 @@ class QRCodeReader extends Component {
       "machine": this.state.data,
     })
     .then(res => {
-      this.props.onReaderClose();
+      this.props.history.push("/my-reservations");
     })
     .catch(err => {
       console.log(err);
@@ -55,36 +49,24 @@ class QRCodeReader extends Component {
   }
 
   render() {
-    const { fullScreen } = this.props;
     return (
-      <Dialog
-        fullScreen={fullScreen}
-        open={this.props.open}
-        onClose={this.props.onReaderClose}
-        aria-labelledby="responsive-dialog-title"
-        transition={Up}
-      >
-        <DialogTitle id="responsive-dialog-title">
-            <strong>Scan QR code</strong>
-        </DialogTitle>
-        <DialogContent>
-          <QrReader
-            delay={this.state.delay}
-            onError={this.handleError}
-            onScan={this.handleScan}
-            style={{ width: '100%' }}
-            facingMode="environment"
-          />
-          <p>{this.state.result}</p>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={this.props.onReaderClose} variant="raised" color="default">
-            Discard
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <div style={{ marginTop: 55 }}>
+        <QrReader
+          delay={ this.state.delay }
+          onError={ this.handleError }
+          onScan={ this.handleScan }
+          style={{ width: '100%' }}
+          facingMode="environment"
+        />
+
+        <div style={{ padding: 10 }}>
+          <Typography>
+            Scan qr code at the reserved machine to start your workout
+          </Typography>
+        </div>
+      </div>
     );
   }
 }
 
-export default withStyles(styles)(withMobileDialog()(QRCodeReader));
+export default withRouter(withStyles(styles)(QRCodeReader));
