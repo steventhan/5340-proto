@@ -235,6 +235,18 @@ class ReservationModifyDialog extends Component {
                   <Divider/>
                 </Grid>
               </Grid>
+
+              <Grid container justify="center" style={{ "marginTop": 10 }}>
+                <Grid item xs={12}>
+                  <Typography variant="subheading"><strong>How to start</strong></Typography>
+                  <Divider/>
+                  <Typography style={{paddingTop: 10, paddingBottom: 10}} component="p">
+                    Scan the qr code or request a check-in code
+                  </Typography>
+                  <Divider/>
+                </Grid>
+              </Grid>
+
             </Grid>
           </DialogContent>}
           <DialogActions>

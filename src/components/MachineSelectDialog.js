@@ -21,10 +21,10 @@ const styles = {
 };
 
 const statusDesc = [
-  {name: "Available", desc: "Machine available", color: "#1ab394"},
-  {name: "Busy", desc: "Less than 5 people in queue", color: "#f8ac59"},
-  {name: "Full", desc: "Queue is full", color: "#ed5565"},
-  {name: "Unavailable", desc: "Machine unavailable", color: "#3f3f3f"},
+  { name: "Available", desc: "Available now", color: "#1ab394" },
+  { name: "Busy", desc: "Currently reserved, future slots available", color: "#f8ac59" },
+  { name: "Full", desc: "Fully reserved for today", color: "#ed5565" },
+  { name: "Unavailable", desc: "Unavailable", color: "#3f3f3f" },
 ]
 
 class MachineSelectDialog extends Component {

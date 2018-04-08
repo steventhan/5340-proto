@@ -13,7 +13,6 @@ class ReservationList extends Component {
     return (
       <List>
         {this.props.reservations
-          .filter(r => moment(r.end) > moment())
           .map(r => {
           return (
             <Button
@@ -117,8 +116,8 @@ class MyReservations extends Component {
             centered
             fullWidth
           >
-            <Tab label="Upcoming" />
-            <Tab label="History" />
+            <Tab label="Current" />
+            <Tab label="Past" />
           </Tabs>
         </AppBar>
         <Grid container style={{marginTop: 110}} spacing={0} justify="flex-end">
@@ -138,12 +137,14 @@ class MyReservations extends Component {
           <Grid xs={12} item>
             {this.state.currentTab === 0 &&
               <ReservationList
-                reservations={this.state.reservations}
-                onMachineClick={this.handleReservationModify}
+                reservations={ this.state.reservations.filter(r => (
+                  ["upcoming", "started"].includes(r.status) && moment(r.end) > moment()
+                )) }
+                onMachineClick={ this.handleReservationModify }
               />}
             {this.state.currentTab === 1 &&
               <ReservationList
-                reservations={this.state.reservations}
+                reservations={ this.state.reservations }
                 onMachineClick={() => {}}
               />}
           </Grid>
