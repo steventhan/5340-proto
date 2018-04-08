@@ -32,9 +32,11 @@ class QRCodeReader extends Component {
     })
     .then(res => {
       this.props.history.push("/my-reservations");
+      this.props.sendSnackbarMsg("Reservation started")
     })
     .catch(err => {
       console.log(err);
+      this.props.sendSnackbarMsg("QR code not recognized");
     })
   }
 
