@@ -6,13 +6,14 @@ import { KeyboardArrowUp, KeyboardArrowDown } from "material-ui-icons";
 import axios from "axios";
 
 import MachineSelectDialog from "./MachineSelectDialog";
-import { StatusChip } from "./UtilComponents";
+import { StatusChip, MachineDetail } from "./UtilComponents";
 import { machineTypes, evalStatus } from "../utils";
 import floorMap from "../floor.png"
 
 const styles = {
   levelButtons: {minWidth: 45, margin: 2}
 };
+
 
 
 class Reserve extends Component {
@@ -102,8 +103,8 @@ class Reserve extends Component {
             </Select>
           </Grid>
         </Grid>
-        <Grid container spacing={0} justify="flex-end">
-          <Grid xs={12} item>
+        <Grid container spacing={0} justify="center">
+          <Grid xs={12} sm={7} md={5} item>
             {this.state.currentTab === 0 &&
               <List>
                 {this.state.machines
@@ -112,17 +113,24 @@ class Reserve extends Component {
                   }).map(m => {
                   return (
                     <Button
+                      fullWidth
                       onClick={(e) => this.handleMachineSelection(e, m._id)}
                       key={m._id}
                       style={{padding: 3, textAlign: "left", textTransform: "None"}}>
-                      <Card>
+                      <Card style={{ width: "100%" }}>
                         <CardContent>
-                          <Grid container spacing={0}>
+                          <Grid container spacing={8} justify="center" alignItems="center">
                             <Grid item xs={4}>
                               <img src={machineTypes[m.type]} alt="ss" style={{width: "90%"}}/>
                             </Grid>
                             <Grid item xs={8}>
-                              <Typography component="p">
+                              <MachineDetail left={ 3 } right={ 9 } label="ID:" text={ m._id } />
+                              <MachineDetail left={ 3 } right={ 9 } label="Type:" text={ m.type } />
+                              <MachineDetail left={ 3 } right={ 9 } label="Status:" text={ <StatusChip status={evalStatus(m)} /> } />
+                              <Typography>
+                                <strong>Description: </strong>{m.description}
+                              </Typography>
+                              {/* <Typography component="p">
                                 <strong>ID: </strong>{m._id}
                               </Typography>
                               <Typography component="p">
@@ -133,7 +141,7 @@ class Reserve extends Component {
                               </div>
                               <Typography>
                                 <strong>Description: </strong>{m.description}
-                              </Typography>
+                              </Typography> */}
                             </Grid>
                           </Grid>
                         </CardContent>

@@ -16,10 +16,11 @@ class ReservationList extends Component {
           .map(r => {
           return (
             <Button
+              fullWidth
               onClick={(e) => this.props.onMachineClick(e, r._id)}
               key={r._id}
               style={{padding: 3, textAlign: "left", textTransform: "None"}}>
-              <Card>
+              <Card style={{ width: "100%"}}>
                 <CardContent>
                   <Grid container spacing={0} justify="center" alignItems="center">
                     <Grid item xs={4}>
@@ -134,7 +135,10 @@ class MyReservations extends Component {
               })}
             </Select>
           </Grid>
-          <Grid xs={12} item>
+        </Grid>
+
+        <Grid container spacing={0} justify="center">
+          <Grid xs={12} sm={7} md={5} item>
             {this.state.currentTab === 0 &&
               <ReservationList
                 reservations={ this.state.reservations.filter(r => (

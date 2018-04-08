@@ -1,5 +1,5 @@
 import React from "react";
-import { Chip } from "material-ui";
+import { Chip, Grid, Typography } from "material-ui";
 import { Slide } from "material-ui/transitions";
 
 const Up = (props) => <Slide direction="up" {...props} />;
@@ -11,10 +11,10 @@ const statusColor = {
   Unavailable: "#3f3f3f",
 }
 
-const StatusChip = (props) => {
+const StatusChip = props => {
   return (
     <Chip
-      label={props.status}
+      label={ props.status }
       style={{
         backgroundColor: statusColor[props.status],
         color: "#fff",
@@ -24,4 +24,21 @@ const StatusChip = (props) => {
   );
 }
 
-export { Up, StatusChip };
+const MachineDetail = props => (
+  <Grid container spacing={ 0 }>
+    <Grid item xs={props.left}>
+      <Typography component="p">
+        <strong>{props.label}</strong>
+      </Typography>
+    </Grid>
+    <Grid item xs={props.right}>
+      {typeof props.text === "string" ?
+        <Typography component="p">
+          {props.text}
+        </Typography> : props.text
+      }
+    </Grid>
+  </Grid>
+)
+
+export { Up, StatusChip, MachineDetail };
