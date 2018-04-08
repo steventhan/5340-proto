@@ -15,6 +15,7 @@ import Reserve from "./components/Reserve";
 import MyReservations from "./components/MyReservations";
 import Settings from "./components/Settings";
 import Membership from "./components/Membership";
+import QRCodeReader from "./components/QRCodeReader";
 import Login from "./components/Login";
 import './App.css';
 
@@ -99,6 +100,9 @@ class App extends Component {
               />
               <PrivateRoute exact path="/settings" component={Settings} isLoggedIn={this.state.isLoggedIn} />
               <PrivateRoute exact path="/membership" component={Membership} isLoggedIn={this.state.isLoggedIn} />
+              <PrivateRoute exact path="/qr" isLoggedIn={this.state.isLoggedIn}
+                render={props => <QRCodeReader {...props} sendSnackbarMsg={this.sendSnackbarMsg} />}
+              />
             </Switch>
           </div>
         </Router>

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { withRouter } from "react-router";
 
 import { AppBar, Avatar, Drawer, Toolbar, Grid, Typography, IconButton, Badge, Divider } from "material-ui";
@@ -7,9 +7,6 @@ import {ListItem, ListItemIcon, ListItemText} from "material-ui/List";
 import { withStyles } from "material-ui/styles";
 import MenuIcon from 'material-ui-icons/Menu';
 import { Dashboard, Assignment, Settings, Person, Notifications, ExitToApp } from 'material-ui-icons';
-
-import HelpPopover from "../HelpPopover";
-import QRCodeReader from "../QRCodeReader";
 
 import treadmill from "../../treadmill.png";
 // import heisenberg from "../../heisenberg.jpg";
@@ -42,6 +39,7 @@ const titles = {
   "/my-reservations": "My reservations",
   "/settings" : "Settings",
   "/membership" : "Membership",
+  "/qr" : "Scan QR code",
   "/" : "Dashboard",
 }
 
@@ -51,6 +49,7 @@ const links = [
   {path: "/my-reservations", name: "My reservations", icon: <Assignment />},
   {path: "/settings", name: "Settings", icon: <Settings />},
   {path: "/membership", name: "Membership", icon: <Person />},
+  {path: "/qr", name: "Scan qr code", icon: <img alt="qr" src={ qrcode } />},
   {path: "/logout", name: "Logout", icon: <ExitToApp />},
 ]
 
@@ -74,63 +73,7 @@ class UserProfile extends Component {
 
 }
 
-
-class QRCode extends Component {
-  state = {
-    qrReaderOpen: false,
-  }
-
-  handleQrReaderOpen = (e) => {
-    e.stopPropagation();
-    this.setState({qrReaderOpen: true});
-  }
-
-
-  render = () => {
-    return (
-      <div style={{ marginBottom: 55 }}>
-        <QRCodeReader open={this.state.qrReaderOpen} onReaderClose={() => this.setState({qrReaderOpen: false})} />
-        <Grid
-          onClick={this.handleQrReaderOpen}
-          container
-          direction="column"
-          justify="center"
-          spacing={0}
-          alignItems="center">
-          <Grid xs={12} item>
-            <img alt="qr" style={{width: 100, height: 100}} src={qrcode} />
-            <div style={{maxWidth: 100}}>
-              <Typography style={{width: "100%"}} align="center" variant="body1">Your QR code</Typography>
-            </div>
-          </Grid>
-        </Grid>
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          spacing={0}
-          alignItems="center">
-          <Grid xs={12} item>
-            <HelpPopover
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              transformOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
-              }}>
-              <Typography style={{padding: 10}} variant="body1">
-                Scan QR code at the reserved machine to start your workout session
-              </Typography>
-            </HelpPopover>
-          </Grid>
-        </Grid>
-      </div>
-    );
-  }
-
-}
+const MyLink = props => <NavLink exact activeStyle={{ backgroundColor: "#ccc" }}  {...props} />
 
 
 class NavigationBar extends Component {
@@ -163,7 +106,7 @@ class NavigationBar extends Component {
             <Divider />
             {links.map((l, i) => {
               return (
-                <ListItem component={Link} to={l.path} key={i} button>
+                <ListItem component={MyLink} to={l.path} key={i} button>
                   <ListItemIcon>
                     {l.icon}
                   </ListItemIcon>
@@ -172,7 +115,6 @@ class NavigationBar extends Component {
               )
             })}
             <Divider />
-            <QRCode />
 
           </div>
         </Drawer>
