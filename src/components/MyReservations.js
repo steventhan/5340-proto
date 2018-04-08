@@ -144,7 +144,7 @@ class MyReservations extends Component {
               />}
             {this.state.currentTab === 1 &&
               <ReservationList
-                reservations={ this.state.reservations }
+                reservations={ this.state.reservations.reverse() }
                 onMachineClick={() => {}}
               />}
           </Grid>
