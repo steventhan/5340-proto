@@ -37,7 +37,6 @@ class QRCodeReader extends Component {
     .catch(err => {
       console.log(err);
       if (err.response.status === 404) {
-        console.log("here");
         this.props.sendSnackbarMsg("No reservation found", { link: "/reserve", label: "Reserve now"});
         this.setState({ data: "" })
       }
