@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, FormControl, InputLabel, Input, FormHelperText,
-  Typography, Button, Divider, CircularProgress } from "material-ui";
+  Typography, Button, Divider, CircularProgress, Dialog, DialogContent, DialogActions } from "material-ui";
 import { ExpandMore } from "material-ui-icons";
 import axios from "axios";
 
 
-class CheckInCodeForm extends Component {
+class CheckInDialog extends Component {
   state = {
     checkingIn: false,
     error: "",
@@ -47,31 +47,52 @@ class CheckInCodeForm extends Component {
 
   render() {
     return (
-      <div style={{ width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-        { this.state.checkingIn ?
-        <CircularProgress />
-          :
-        <FormControl
-          fullWidth error={ this.state.error !== "" }
-          aria-describedby="name-error-text"
-          style={{ marginBottom: 5 }}
+      <div>
+        <Dialog
+          open={this.props.open}
+          onClose={this.props.onDiscard}
         >
-          <InputLabel htmlFor="check-in-code">Code</InputLabel>
-          <Input id="check-in-code" value={ this.state.code } onChange={ this.handleCodeChange } />
-          <FormHelperText id="check-in-code-error">{ this.state.error }</FormHelperText>
-        </FormControl> }
-        { !this.state.checkingIn &&
-        <Button onClick={ this.handleCheckIn } fullWidth variant="raised" color="primary">
-          Check in
-        </Button> }
+          <DialogContent
+            id="alert-dialog-title"
+            style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}
+          >
+            <Typography>
+              Check-in code can be found at the reserved machine
+            </Typography>
+            { this.state.checkingIn ?
+            <CircularProgress />
+              :
+            <FormControl
+              fullWidth error={ this.state.error !== "" }
+              aria-describedby="name-error-text"
+            >
+              <InputLabel htmlFor="check-in-code">Code</InputLabel>
+              <Input id="check-in-code" value={ this.state.code } onChange={ this.handleCodeChange } />
+              <FormHelperText id="check-in-code-error">{ this.state.error }</FormHelperText>
+            </FormControl> }
+          </DialogContent>
+          <DialogActions>
+            <Button variant="raised" onClick={this.props.onDiscard} color="default">
+              Discard
+            </Button>
+            <Button
+              variant="raised" disabled={ this.state.checkingIn }
+              onClick={ this.handleCheckIn } color="primary" autoFocus
+            >
+              Check in
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
-    );
+    )
   }
 }
+
 
 class CheckInOptions extends Component {
   state = {
     expandedPanel: 1,
+    codeInput: false,
   };
 
   handleChangePanel = (e, expanded, panelNum) => {
@@ -86,11 +107,26 @@ class CheckInOptions extends Component {
       newExpandedPanel = panelNum;
     }
     this.setState({ expandedPanel: newExpandedPanel });
-   };
+  };
+
+  handleOpenCodeInput = e => {
+    this.setState({ codeInput: true });
+  }
+
+  handleDiscardCodeInput = e => {
+    this.setState({ codeInput: false });
+  }
 
   render() {
     return (
-      <div style={{ width: "100%", marginTop: 10 }}>
+      <div style={{ width: "100%" }}>
+        <CheckInDialog
+          open={ this.state.codeInput }
+          onDiscard={ this.handleDiscardCodeInput }
+          onDialogClose={ this.props.onDialogClose }
+          sendSnackbarMsg={ this.props.sendSnackbarMsg }
+          reservation={ this.props.reservation }
+        />
         <ExpansionPanel
           expanded={ this.state.expandedPanel === 0 }
           onChange={ (e, expanded) => this.handleChangePanel(e, expanded, 0) }
@@ -100,10 +136,9 @@ class CheckInOptions extends Component {
           </ExpansionPanelSummary>
           <Divider />
           <ExpansionPanelDetails style={{ paddingTop: 24 }}>
-            <CheckInCodeForm
-              onDialogClose={ this.props.onDialogClose }
-              sendSnackbarMsg={ this.props.sendSnackbarMsg }
-              reservation={ this.props.reservation } />
+            <Button onClick={ this.handleOpenCodeInput } fullWidth variant="raised" color="primary">
+              Enter code
+            </Button>
           </ExpansionPanelDetails>
         </ExpansionPanel>
         <ExpansionPanel

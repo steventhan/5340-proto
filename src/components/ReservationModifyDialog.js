@@ -245,6 +245,7 @@ class ReservationModifyDialog extends Component {
               <Grid container justify="center" style={{ "marginTop": 10 }}>
                 <Grid item xs={12}>
                   <Typography variant="subheading"><strong>Use one of these options to check in</strong></Typography>
+                  <br/>
                 </Grid>
               </Grid>}
 
@@ -252,18 +253,6 @@ class ReservationModifyDialog extends Component {
                 && moment(this.state.reservation.start) <= now
                 && moment(this.state.reservation.end) > now
                 &&
-              // <Grid container justify="center" style={{ "marginTop": 10 }}>
-              //   <Grid item xs={6} style={{ display: "flex" }}>
-              //     <Button fullWidth variant="raised">
-              //       Check-in code
-              //     </Button>
-              //   </Grid>
-              //   <Grid item xs={6}>
-              //     <Button component={ Link } to="/qr" fullWidth variant="raised">
-              //       Scan qr
-              //     </Button>
-              //   </Grid>
-              // </Grid>
               <CheckInOptions
                 onDialogClose={ this.props.onDialogClose }
                 sendSnackbarMsg={ this.props.sendSnackbarMsg }
