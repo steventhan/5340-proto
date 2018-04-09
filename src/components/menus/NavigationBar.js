@@ -6,7 +6,7 @@ import { AppBar, Drawer, Toolbar, Grid, Typography, IconButton, Badge, Divider }
 import {ListItem, ListItemIcon, ListItemText} from "material-ui/List";
 import { withStyles } from "material-ui/styles";
 import MenuIcon from 'material-ui-icons/Menu';
-import { Dashboard, Assignment, Settings, Person, Notifications, ExitToApp } from 'material-ui-icons';
+import { Dashboard, Assignment, Settings, Person, Notifications, ExitToApp } from "material-ui-icons";
 
 import treadmill from "../../treadmill.png";
 // import heisenberg from "../../heisenberg.jpg";
