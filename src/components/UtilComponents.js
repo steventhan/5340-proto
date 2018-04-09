@@ -1,6 +1,7 @@
-import React from "react";
+import React, { Component } from "react";
 import { Chip, Grid, Typography } from "material-ui";
 import { Slide } from "material-ui/transitions";
+import axios from "axios";
 
 const Up = (props) => <Slide direction="up" {...props} />;
 
@@ -11,17 +12,50 @@ const statusColor = {
   Unavailable: "#3f3f3f",
 }
 
-const StatusChip = props => {
-  return (
-    <Chip
-      label={ props.status }
-      style={{
-        backgroundColor: statusColor[props.status],
-        color: "#fff",
-        height: 20,
-        padding: "1px 1px",
-      }} />
-  );
+class StatusChip extends Component  {
+  state = {
+    status: ""
+  }
+
+  componentDidMount = () => {
+    this.fetchCurrentReservation();
+  }
+
+  componentWillReceiveProps = () => {
+    this.fetchCurrentReservation();
+  }
+
+  fetchCurrentReservation = () => {
+    axios.get(`api/machines/${this.props.machine._id}/reservation`, {
+        params: { user: JSON.parse(localStorage.getItem("user")).googleId }
+      })
+      .then(res => {
+        this.setState({ status: "Busy" });
+      })
+      .catch(err => {
+        if (err.response.status === 404) {
+          this.setState({ status: "Available" });
+        };
+      });
+  }
+
+  render() {
+    return (
+      <div style={{ display: "inline" }}>
+        { this.state.status !== "" &&
+        <Chip
+          label={ this.state.status }
+          style={{
+            backgroundColor: statusColor[this.state.status],
+            color: "#fff",
+            height: 20,
+            padding: "1px 1px",
+          }}
+        />
+        }
+      </div>
+    );
+  }
 }
 
 const MachineDetail = props => (

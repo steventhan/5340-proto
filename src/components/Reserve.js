@@ -149,7 +149,7 @@ class Reserve extends Component {
                             <Grid item xs={8}>
                               <MachineDetail left={ 3 } right={ 9 } label="ID:" text={ m._id } />
                               <MachineDetail left={ 3 } right={ 9 } label="Type:" text={ m.type } />
-                              <MachineDetail left={ 3 } right={ 9 } label="Status:" text={ <StatusChip status={evalStatus(m)} /> } />
+                              <MachineDetail left={ 3 } right={ 9 } label="Status:" text={ <StatusChip machine={ m } /> } />
                               <Typography>
                                 <strong>Description: </strong>{m.description}
                               </Typography>

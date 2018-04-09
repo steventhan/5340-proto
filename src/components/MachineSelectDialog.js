@@ -11,7 +11,7 @@ import moment from "moment";
 
 import HelpPopover from "./HelpPopover";
 import { Up, StatusChip } from "./UtilComponents";
-import { machineTypes, evalStatus } from "../utils"
+import { machineTypes } from "../utils"
 
 const styles = {
   fullWidth: {
@@ -172,7 +172,7 @@ class MachineSelectDialog extends Component {
                 <strong>Type: </strong>{this.state.machine.type}
               </div>
               <div>
-                <strong>Status: </strong> {<StatusChip status={evalStatus(this.state.machine)} />}
+                <strong>Status: </strong> {<StatusChip machine={ this.state.machine } />}
                 <HelpPopover
                   anchorOrigin={{
                     vertical: "bottom",
