@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { findDOMNode } from "react-dom";
 import { IconButton, Popover, Typography, Button, Snackbar } from "material-ui";
 import { withStyles } from "material-ui/styles";
-import { Link } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import CloseIcon from "material-ui-icons/Close";
 
 import NavigationBar from "./menus/NavigationBar";
@@ -81,7 +81,7 @@ class Menus extends Component {
           <Typography style={{padding: 10}}>You have some notifications...</Typography>
         </Popover>
         <Button
-          style={this.props.snackbarOpen ? {display: "none"} : {}}
+          style={ this.props.snackbarOpen || this.props.location.pathname === "/reserve" ? {display: "none"} : {} }
           onClick={this.handleFloatingButton}
           variant="fab" color="primary" className={classes.float}>
           <img src={startWorkout} alt="ss" width="65%" />
@@ -121,4 +121,4 @@ class Menus extends Component {
   }
 }
 
-export default withStyles(styles)(Menus);
+export default withRouter(withStyles(styles)(Menus));
