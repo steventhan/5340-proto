@@ -50,7 +50,10 @@ class FloatingButtonDialog extends Component {
               <GridListTile
                 key={i}
                 component={Link}
-                to="/reserve"
+                to={{
+                  pathname: "/reserve",
+                  state: { type: type.name }
+                }}
                 onClick={this.props.handleDialogClose}>
                   <img src={type.img} alt={type.name} />
                   <GridListTileBar

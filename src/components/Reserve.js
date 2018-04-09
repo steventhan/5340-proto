@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { AppBar, Card, CardContent, Typography,
+import { AppBar, Card, CardContent, Typography, Checkbox, ListItemText,
    Grid, List, Tabs, Tab, Button, MenuItem, Select } from "material-ui";
 import { withStyles } from "material-ui/styles";
 import { KeyboardArrowUp, KeyboardArrowDown } from "material-ui-icons";
@@ -15,6 +15,14 @@ const styles = {
 };
 
 
+const types = [
+  "Bike",
+  "Elliptical",
+  "Pull-up",
+  "Stepmill",
+  "Treadmill",
+];
+
 
 class Reserve extends Component {
   constructor(props) {
@@ -22,7 +30,7 @@ class Reserve extends Component {
     this.state = {
       currentTab: 0,
       machines: [],
-      machineTypes: [],
+      machineTypes: props.location.state && props.location.state.type ? [props.location.state.type] : types,
       dialogOpen: false,
     };
   }
@@ -59,6 +67,10 @@ class Reserve extends Component {
     this.setState({ dialogOpen: false, machineId: undefined });
   }
 
+  handleTypeChange = e => {
+    this.setState({ machineTypes: e.target.value });
+  }
+
   render() {
     const classes = this.props.classes
     return (
@@ -91,13 +103,23 @@ class Reserve extends Component {
           </Grid>
           <Grid item style={{paddingRight: 10}}>
             <Select
-              value="All"
-              displayEmpty
-              name="Types"
+              multiple
+              renderValue={selected => {
+                if (selected.length === 1) {
+                  return selected[0];
+                }
+                return selected.length === types.length ? "All" : "Multiple";
+              }}
+              value={ this.state.machineTypes }
+              onChange={ this.handleTypeChange }
+              name="types"
             >
-              {Object.keys(machineTypes).map((type, i) => {
+              {types.map((type, i) => {
                 return (
-                  <MenuItem key={i} value={type}>{type}</MenuItem>
+                  <MenuItem key={i} value={ type }>
+                    <Checkbox checked={ this.state.machineTypes.indexOf(type) > -1 } />
+                    <ListItemText primary={ type } />
+                  </MenuItem>
                 );
               })}
             </Select>
@@ -109,7 +131,8 @@ class Reserve extends Component {
               <List>
                 {this.state.machines
                   .filter(m => {
-                    return ["Available", "Busy"].includes(evalStatus(m));
+                    return ["Available", "Busy"].includes(evalStatus(m))
+                            && this.state.machineTypes.includes(m.type);
                   }).map(m => {
                   return (
                     <Button
