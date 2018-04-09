@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { withStyles } from "material-ui/styles";
-import { Link } from "react-router-dom";
 import { Divider, Button, Typography, Grid, CircularProgress } from 'material-ui';
 import Dialog, {
   DialogActions,
@@ -11,6 +10,7 @@ import Dialog, {
 import axios from "axios";
 import moment from "moment";
 
+import CheckInOptions from "./CheckInOptions";
 import { Up } from "./UtilComponents";
 import { machineTypes, capitalize } from "../utils";
 
@@ -116,7 +116,7 @@ class ReservationModifyDialog extends Component {
     this.setState({ confirmCancelationDialogOpen: false });
   }
 
-  handleCancel = (e) => {
+  handleCancel = e => {
     axios.delete(`/api/reservations/${this.state.reservation._id}`, {
     	data: { user: JSON.parse(localStorage.getItem("user")).googleId },
     })
@@ -137,13 +137,12 @@ class ReservationModifyDialog extends Component {
   }
 
   handleEnd = (e, newStatus) => {
-    console.log(newStatus);
     axios.patch(`/api/reservations/${this.state.reservation._id}`, {
       user: JSON.parse(localStorage.getItem("user")).googleId,
-      status: newStatus
+      status: newStatus,
+      code: this.state.reservation.code
     })
     .then(res => {
-      console.log(res);
       this.setState(
         { reservation: undefined }, () => {
           this.props.onDialogClose(e)
@@ -181,6 +180,8 @@ class ReservationModifyDialog extends Component {
         action = "cancel";
       }
     }
+
+    const now = moment();
 
     return (
       <div>
@@ -237,26 +238,38 @@ class ReservationModifyDialog extends Component {
                 </Grid>
               </Grid>
 
-              {this.state.reservation.status === "upcoming" &&
+              {this.state.reservation.status === "upcoming"
+                && moment(this.state.reservation.start) <= now
+                && moment(this.state.reservation.end) > now
+                &&
               <Grid container justify="center" style={{ "marginTop": 10 }}>
                 <Grid item xs={12}>
                   <Typography variant="subheading"><strong>Use one of these options to check in</strong></Typography>
                 </Grid>
               </Grid>}
 
-              {this.state.reservation.status === "upcoming" &&
-              <Grid container justify="center" style={{ "marginTop": 10 }}>
-                <Grid item xs={6} style={{ display: "flex" }}>
-                  <Button fullWidth variant="raised">
-                    Check-in code
-                  </Button>
-                </Grid>
-                <Grid item xs={6}>
-                  <Button component={ Link } to="/qr" fullWidth variant="raised">
-                    Scan qr
-                  </Button>
-                </Grid>
-              </Grid>}
+              {this.state.reservation.status === "upcoming"
+                && moment(this.state.reservation.start) <= now
+                && moment(this.state.reservation.end) > now
+                &&
+              // <Grid container justify="center" style={{ "marginTop": 10 }}>
+              //   <Grid item xs={6} style={{ display: "flex" }}>
+              //     <Button fullWidth variant="raised">
+              //       Check-in code
+              //     </Button>
+              //   </Grid>
+              //   <Grid item xs={6}>
+              //     <Button component={ Link } to="/qr" fullWidth variant="raised">
+              //       Scan qr
+              //     </Button>
+              //   </Grid>
+              // </Grid>
+              <CheckInOptions
+                onDialogClose={ this.props.onDialogClose }
+                sendSnackbarMsg={ this.props.sendSnackbarMsg }
+                reservation={ this.state.reservation }
+              />
+              }
 
             </Grid>
           </DialogContent>}
