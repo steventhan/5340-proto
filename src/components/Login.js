@@ -9,8 +9,8 @@ import logo from "../husky-logo.png";
 
 class Login extends Component {
 
-  handleLogin = () => {
-    this.props.onLogin();
+  handleFailure = (err) => {
+    console.log(err);
   }
 
   render() {
@@ -35,7 +35,7 @@ class Login extends Component {
             clientId="442551890784-tegu7qqjscdlne0h7jio7eir0a739t46.apps.googleusercontent.com"
             hostedDomain="husky.neu.edu"
             onSuccess={this.props.onGoogleLogin}
-            onFailure={this.props.onGoogleLogin}
+            onFailure={this.handleFailure}
           >
             <Button
               variant="raised"
