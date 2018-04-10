@@ -91,7 +91,7 @@ class CheckInDialog extends Component {
 
 class CheckInOptions extends Component {
   state = {
-    expandedPanel: 1,
+    expandedPanel: 2,
     codeInput: false,
   };
 
