@@ -175,7 +175,7 @@ class Reserve extends Component {
               </List>}
             {this.state.currentTab === 1 &&
               <div style={{paddingTop: 3}}>
-                <img onClick={() => this.setState({dialogOpen: true})} alt="ss" src={floorMap} width="100%"/>
+                <img onClick={(e) => this.handleMachineSelection(e, 202)} alt="ss" src={floorMap} width="100%"/>
               </div>}
           </Grid>
         </Grid>
